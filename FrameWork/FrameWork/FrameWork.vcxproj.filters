@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{cfe0003b-1904-44f2-bac8-94a781f22117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Main">
+      <UniqueIdentifier>{65476193-8597-4a77-955c-6a49aaadb80c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Include">
+      <UniqueIdentifier>{11bf8d97-637e-48f4-9687-180921b2752a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Renderer">
+      <UniqueIdentifier>{5b6bd858-2c4d-4fa1-b55d-89975338f9c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="90.Shader">
+      <UniqueIdentifier>{e5ef05f4-b400-44b3-870e-d54b7f601abc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Include.h">
+      <Filter>98.Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Value.h">
+      <Filter>98.Include</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame.h">
+      <Filter>00.Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>01.Renderer</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameWork.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp">
+      <Filter>00.Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>01.Renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>99.Default</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\SolidRect.fs">
+      <Filter>90.Shader</Filter>
+    </None>
+    <None Include="Shaders\SolidRect.vs">
+      <Filter>90.Shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>

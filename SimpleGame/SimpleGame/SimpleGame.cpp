@@ -14,19 +14,28 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
+#include "Object.h"
+#include <vector>
 
 using namespace std;
 
 
 Renderer *g_Renderer = NULL;
-
+vector<Object*>		g_vecObject;
 void RenderScene(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	// Renderer Test
-	g_Renderer->DrawSolidRect(0, 0, 0, 1, 1, 0, 1, 1);
+	for (Object* pobj : g_vecObject)
+	{
+
+		g_Renderer->DrawSolidRect(pobj->GetInfo().x, pobj->GetInfo().y, pobj->GetInfo().z
+			, pobj->GetInfo().size
+			, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a);
+	}
+
+	
 
 	glutSwapBuffers();
 }
@@ -50,7 +59,20 @@ void SpecialKeyInput(int key, int x, int y)
 {
 	RenderScene();
 }
+void ObjectCreate()
+{
+	Object* pobj = new Object;
+	pobj->SetInfo(OBJ_INFO(50, 200, 0, 100, 1, 1, 1, 1));
 
+	g_vecObject.push_back(pobj);
+
+
+	pobj = new Object;
+	pobj->SetInfo(OBJ_INFO(0, 0, 0, 20, 1, 1, 1, 1));
+
+	g_vecObject.push_back(pobj);
+
+}
 int main(int argc, char **argv)
 {
 	// Initialize GL things
@@ -76,6 +98,7 @@ int main(int argc, char **argv)
 	{
 		std::cout << "Renderer could not be initialized.. \n";
 	}
+	ObjectCreate();
 
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
@@ -86,7 +109,11 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	delete g_Renderer;
-
+	for (Object* pobj : g_vecObject)
+	{
+		delete pobj;
+	}
+	g_vecObject.clear();
     return 0;
 }
 

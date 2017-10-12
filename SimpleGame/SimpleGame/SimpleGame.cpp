@@ -9,44 +9,52 @@ but WITHOUT ANY WARRANTY.
 */
 
 #include "stdafx.h"
-#include <iostream>
-#include "Dependencies\glew.h"
-#include "Dependencies\freeglut.h"
-
 #include "Renderer.h"
 #include "Object.h"
-#include <vector>
-
-using namespace std;
-
 
 Renderer *g_Renderer = NULL;
 vector<Object*>		g_vecObject;
+
+void Update()
+{
+	for (Object* pobj : g_vecObject)
+	{
+		pobj->Update();
+	}
+}
 void RenderScene(void)
 {
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
 	for (Object* pobj : g_vecObject)
 	{
 
-		g_Renderer->DrawSolidRect(pobj->GetInfo().x, pobj->GetInfo().y, pobj->GetInfo().z
+		g_Renderer->DrawSolidRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z
 			, pobj->GetInfo().size
 			, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a);
 	}
-
-	
 
 	glutSwapBuffers();
 }
 
 void Idle(void)
 {
+	Update();
 	RenderScene();
 }
 
 void MouseInput(int button, int state, int x, int y)
 {
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		//Å¬¸¯
+		Object* pobj = new Object;;
+		pobj->SetInfo(OBJ_INFO(x - 250, 250 - y  , 0, 20, rand() % 10 * 0.1f, rand() % 10 * 0.1f, rand() % 10 * 0.1f, 1));
+		g_vecObject.push_back(pobj);
+	}
 	RenderScene();
 }
 
@@ -61,17 +69,15 @@ void SpecialKeyInput(int key, int x, int y)
 }
 void ObjectCreate()
 {
-	Object* pobj = new Object;
-	pobj->SetInfo(OBJ_INFO(50, 200, 0, 100, 1, 1, 1, 1));
-
-	g_vecObject.push_back(pobj);
-
-
-	pobj = new Object;
-	pobj->SetInfo(OBJ_INFO(0, 0, 0, 20, 1, 1, 1, 1));
-
-	g_vecObject.push_back(pobj);
-
+	Object* pobj = nullptr;
+	
+	for (int i = 0; i < 1; ++i)
+	{
+		pobj = new Object;
+		pobj->SetInfo(OBJ_INFO(rand() % 250 , i * 40   - 250 + 20, 0, 20, i * 0.01f, i *  0.02f, i *  0.11f, 1));
+		g_vecObject.push_back(pobj);
+	}
+	
 }
 int main(int argc, char **argv)
 {

@@ -15,6 +15,10 @@ public:
 	}
 
 	const OBJ_INFO& GetInfo() { return m_tInfo; }
+
+	bool CollisionCheck(float x, float y, int size);
+	void Move();
+	void SetIsColl(bool iscoll) { m_IsCollision = iscoll; }
 private:
 	OBJ_INFO	m_tInfo;
 	float		m_fSpeed;
@@ -24,5 +28,6 @@ private:
 	MYVECTOR	m_vDir;
 
 	float		m_fDegree;
+	bool		m_IsCollision;
 };
 

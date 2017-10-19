@@ -8,8 +8,7 @@ Object::Object()
 	m_fSpeed = 0.1f;
 	m_fTarget = 250.0f;
 	m_fDegree = 0;
-
-
+	m_IsCollision = false;
 }
 
 
@@ -18,6 +17,25 @@ Object::~Object()
 }
 
 void Object::Update()
+{
+	Move();
+	if (m_IsCollision)
+	{
+		//»¡°£»ö
+		m_tInfo.r = 1.0f;
+		m_tInfo.g = 0.0f;
+		m_tInfo.b = 0.0f;
+		m_tInfo.a = 1.0f;
+	}
+	else
+	{
+		m_tInfo.r = 1.0f;
+		m_tInfo.g = 1.0f;
+		m_tInfo.b = 1.0f;
+		m_tInfo.a = 1.0f;
+	}
+}
+void Object::Move()
 {
 	m_vDir.Normalize();
 	if (m_tInfo.vPos.x <= m_fTarget)
@@ -34,9 +52,28 @@ void Object::Update()
 	}
 
 	m_tInfo.vPos += m_vDir * m_fSpeed;
+}
+bool Object::CollisionCheck(float x, float y, int size)
+{
+	RECT	rcMyRect;
+	RECT	rcYouRect;
+	rcMyRect.left = m_tInfo.vPos.x - m_tInfo.size / 2;
+	rcMyRect.top = m_tInfo.vPos.y - m_tInfo.size / 2;
+	rcMyRect.right = m_tInfo.vPos.x + m_tInfo.size / 2;
+	rcMyRect.bottom = m_tInfo.vPos.y + m_tInfo.size / 2;
 
-	/*m_fDegree += 1.0f;
 
-	m_tInfo.vPos.x += cosf(m_fDegree * 3.14 / 180.0f);
-	m_tInfo.vPos.y += sinf(m_fDegree * 3.14 / 180.0f);*/
+	rcYouRect.left = x - size / 2;
+	rcYouRect.top = y - size / 2;
+	rcYouRect.right = x + size / 2;
+	rcYouRect.bottom = y + size / 2;
+
+	RECT rc;
+	if (IntersectRect(&rc, &rcMyRect, &rcYouRect))
+	{
+		m_IsCollision = true;
+		return true;
+	}
+	
+	return false;
 }

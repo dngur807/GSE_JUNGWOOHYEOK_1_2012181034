@@ -4,9 +4,13 @@
 
 Object::Object()
 {
-	m_vDir.x = 1.0f;
+	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
+	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
+	m_vDir.x = (rand() % 10 +1 ) * 0.1f;
+	m_vDir.y = (rand() % 10 + 1) * 0.1f;
 	m_fSpeed = 0.1f;
 	m_fTarget = 250.0f;
+	m_fTargetY = 250.0f;
 	m_fDegree = 0;
 	m_IsCollision = false;
 }
@@ -40,16 +44,46 @@ void Object::Move()
 	m_vDir.Normalize();
 	if (m_tInfo.vPos.x <= m_fTarget)
 	{
-		m_vDir.x = 1.0f;
+		m_vDir.x = m_vPrevDir.x;
 		if (m_fTarget - m_tInfo.vPos.x <= 20)
+		{
+			m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
+			m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 			m_fTarget = -250;
+		}
 	}
 	else if (m_tInfo.vPos.x >= m_fTarget)
 	{
-		m_vDir.x = -1.0f;
-		if (m_tInfo.vPos.x - m_fTarget <= 20)
+		m_vDir.x = -m_vPrevDir.x;
+		if (m_tInfo.vPos.x - m_fTargetY <= 20)
+		{
+			m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
+			m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 			m_fTarget = 250;
+		}
 	}
+
+	if (m_tInfo.vPos.y <= m_fTargetY)
+	{
+		m_vDir.y = m_vPrevDir.y;
+		if (m_fTarget - m_tInfo.vPos.y <= 20)
+		{
+			m_fTargetY = -250;
+			m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
+			m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
+		}
+	}
+	else if (m_tInfo.vPos.y >= m_fTargetY)
+	{
+		m_vDir.y = -m_vPrevDir.y;
+		if (m_tInfo.vPos.y - m_fTargetY <= 20)
+		{
+			m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
+			m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
+			m_fTargetY = 250;
+		}
+	}
+
 
 	m_tInfo.vPos += m_vDir * m_fSpeed;
 }

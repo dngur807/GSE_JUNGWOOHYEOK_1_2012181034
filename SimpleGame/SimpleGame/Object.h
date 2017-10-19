@@ -24,9 +24,10 @@ private:
 	float		m_fSpeed;
 
 	float		m_fTarget;
+	float		m_fTargetY;
 	MYVECTOR	m_vPos;
 	MYVECTOR	m_vDir;
-
+	MYVECTOR	m_vPrevDir;
 	float		m_fDegree;
 	bool		m_IsCollision;
 };

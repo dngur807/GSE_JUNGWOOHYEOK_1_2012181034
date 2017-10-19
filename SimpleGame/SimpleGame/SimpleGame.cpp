@@ -72,7 +72,7 @@ void SpecialKeyInput(int key, int x, int y)
 }
 void ObjectCreate()
 {
-	for ( int i = 0 ; i < 2 ; ++i)
+	for ( int i = 0 ; i < 50 ; ++i)
 		g_SceneMgr.CreateObject(rand() % 500 - 250, rand() % 500 - 250  , 0);
 }
 int main(int argc, char **argv)

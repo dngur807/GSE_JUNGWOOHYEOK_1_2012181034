@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "stdafx.h"
 #include "Object.h"
 
@@ -7,7 +6,7 @@ Object::Object()
 {
 	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
 	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
-	m_vDir.x = (rand() % 10 +1 ) * 0.1f;
+	m_vDir.x = (rand() % 10 + 1) * 0.1f;
 	m_vDir.y = (rand() % 10 + 1) * 0.1f;
 	m_fSpeed = 0.1f;
 	m_fTarget = 250.0f;
@@ -109,50 +108,6 @@ bool Object::CollisionCheck(float x, float y, int size)
 		m_IsCollision = true;
 		return true;
 	}
-	
+
 	return false;
 }
-=======
-#include "stdafx.h"
-#include "Object.h"
-
-
-Object::Object()
-{
-	m_vDir.x = 1.0f;
-	m_fSpeed = 0.1f;
-	m_fTarget = 250.0f;
-	m_fDegree = 0;
-
-
-}
-
-
-Object::~Object()
-{
-}
-
-void Object::Update()
-{
-	m_vDir.Normalize();
-	if (m_tInfo.vPos.x <= m_fTarget)
-	{
-		m_vDir.x = 1.0f;
-		if (m_fTarget - m_tInfo.vPos.x <= 20)
-			m_fTarget = -250;
-	}
-	else if (m_tInfo.vPos.x >= m_fTarget)
-	{
-		m_vDir.x = -1.0f;
-		if (m_tInfo.vPos.x - m_fTarget <= 20)
-			m_fTarget = 250;
-	}
-
-	m_tInfo.vPos += m_vDir * m_fSpeed;
-
-	/*m_fDegree += 1.0f;
-
-	m_tInfo.vPos.x += cosf(m_fDegree * 3.14 / 180.0f);
-	m_tInfo.vPos.y += sinf(m_fDegree * 3.14 / 180.0f);*/
-}
->>>>>>> 1dbb55a808a385c2583014e7f4f3da3bd3ece7b8

@@ -8,11 +8,16 @@ Object::Object()
 	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 	m_vDir.x = (rand() % 10 + 1) * 0.1f;
 	m_vDir.y = (rand() % 10 + 1) * 0.1f;
-	m_fSpeed = 0.1f;
+	m_fSpeed = 100;
 	m_fTarget = 250.0f;
 	m_fTargetY = 250.0f;
 	m_fDegree = 0;
+
+	m_fLifeTime = 10000.0f;
+	m_fLife = 100.0f;
 	m_IsCollision = false;
+	m_IsDestory = false;
+
 }
 
 
@@ -20,9 +25,18 @@ Object::~Object()
 {
 }
 
-void Object::Update()
+void Object::Update(float fTime)
 {
-	Move();
+
+	if (m_fLife <= 0 || m_fLifeTime <= 0)
+		m_IsDestory = true;
+	if (m_IsDestory == true)
+		return;
+
+	m_fLifeTime -= 0.01f;
+
+
+	Move(fTime);
 	if (m_IsCollision)
 	{
 		//»¡°£»ö
@@ -39,7 +53,7 @@ void Object::Update()
 		m_tInfo.a = 1.0f;
 	}
 }
-void Object::Move()
+void Object::Move(float fTime)
 {
 	m_vDir.Normalize();
 	if (m_tInfo.vPos.x <= m_fTarget)
@@ -47,8 +61,8 @@ void Object::Move()
 		m_vDir.x = m_vPrevDir.x;
 		if (m_fTarget - m_tInfo.vPos.x <= 20)
 		{
-			m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
-			m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
+		//	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
+		//	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 			m_fTarget = -250;
 		}
 	}
@@ -84,8 +98,13 @@ void Object::Move()
 		}
 	}
 
+	float Time = fTime * 0.001f ;
 
-	m_tInfo.vPos += m_vDir * m_fSpeed;
+//	cout << fTime << endl;
+	
+	m_tInfo.vPos += m_vDir * ( m_fSpeed * Time) ;
+
+	//cout << m_tInfo.vPos.x << "\t" << m_tInfo.vPos .y<< endl;
 }
 bool Object::CollisionCheck(float x, float y, int size)
 {
@@ -105,6 +124,7 @@ bool Object::CollisionCheck(float x, float y, int size)
 	RECT rc;
 	if (IntersectRect(&rc, &rcMyRect, &rcYouRect))
 	{
+		m_fLife -= 0.01f;
 		m_IsCollision = true;
 		return true;
 	}

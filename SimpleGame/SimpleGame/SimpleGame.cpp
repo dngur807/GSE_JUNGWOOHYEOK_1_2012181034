@@ -13,38 +13,35 @@ but WITHOUT ANY WARRANTY.
 #include "Object.h"
 #include "SceneMgr.h"
 
-Renderer *g_Renderer = NULL;
-SceneMgr			g_SceneMgr;
+//Renderer *g_Renderer = NULL;
+SceneMgr*			g_SceneMgr = nullptr;
 
-void Update()
+DWORD		g_prevTime = 0;
+
+void Update(float fElapsedTime)
 {
 
-	g_SceneMgr.Update();
+	g_SceneMgr->Update(fElapsedTime);
 	
 }
 void RenderScene(void)
 {
-	
+	DWORD dwStartTime = timeGetTime();
+	DWORD dwElapsedTime = dwStartTime - g_prevTime;
+	g_prevTime = dwStartTime;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	for (int i = 0; i < g_SceneMgr.GetSize(); ++i)
-	{
-		Object* pobj = g_SceneMgr.GetObj(i);
-
-		if (pobj)
-		{
-			g_Renderer->DrawSolidRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z
-				, pobj->GetInfo().size
-				, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a);
-		}
-	}
+	
+	Update((float)dwElapsedTime);
+	g_SceneMgr->Render();
 	glutSwapBuffers();
+
 }
 
 void Idle(void)
 {
-	Update();
 	RenderScene();
 }
 
@@ -56,7 +53,7 @@ void MouseInput(int button, int state, int x, int y)
 		//Å¬¸¯
 		//Object* pobj = new Object;;
 	//	pobj->SetInfo(OBJ_INFO(x - 250, 250 - y  , 0, 20, rand() % 10 * 0.1f, rand() % 10 * 0.1f, rand() % 10 * 0.1f, 1));
-		g_SceneMgr.CreateObject(x - 250, 250 - y , 0);
+		g_SceneMgr->CreateObject(x - 250, 250 - y , 0);
 	}
 	RenderScene();
 }
@@ -72,8 +69,8 @@ void SpecialKeyInput(int key, int x, int y)
 }
 void ObjectCreate()
 {
-	for ( int i = 0 ; i < 50 ; ++i)
-		g_SceneMgr.CreateObject(rand() % 500 - 250, rand() % 500 - 250  , 0);
+//	for ( int i = 0 ; i < MAX_OBJECTS_COUNT; ++i)
+//		g_SceneMgr->CreateObject(rand() % 500 - 250, rand() % 500 - 250  , 0);
 }
 int main(int argc, char **argv)
 {
@@ -97,11 +94,12 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize Renderer
-	g_Renderer = new Renderer(500, 500);
-	if (!g_Renderer->IsInitialized())
+//	g_Renderer = new Renderer(500, 500);
+	/*if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";
-	}
+	}*/
+	g_SceneMgr = new SceneMgr;
 	ObjectCreate();
 
 	glutDisplayFunc(RenderScene);
@@ -110,9 +108,12 @@ int main(int argc, char **argv)
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
 
+
+	g_prevTime = timeGetTime();
+
 	glutMainLoop();
 
-	g_SceneMgr.Clear();
+	g_SceneMgr->Clear();
 
     return 0;
 }

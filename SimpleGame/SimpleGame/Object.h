@@ -8,7 +8,7 @@ public:
 	~Object();
 
 public:
-	void Update();
+	void Update(float fTime);
 	void SetInfo(OBJ_INFO& info)
 	{
 		m_tInfo = info; 
@@ -17,8 +17,10 @@ public:
 	const OBJ_INFO& GetInfo() { return m_tInfo; }
 
 	bool CollisionCheck(float x, float y, int size);
-	void Move();
+	void Move(float fTime);
 	void SetIsColl(bool iscoll) { m_IsCollision = iscoll; }
+
+	bool GetIsDestory() { return m_IsDestory; }
 private:
 	OBJ_INFO	m_tInfo;
 	float		m_fSpeed;
@@ -31,5 +33,9 @@ private:
 	MYVECTOR	m_vPrevDir;
 	float		m_fDegree;
 	bool		m_IsCollision;
+	bool		m_IsDestory;
+	float		m_fLife;
+
+	float		m_fLifeTime;
 };
 

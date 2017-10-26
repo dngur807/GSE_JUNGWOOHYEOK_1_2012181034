@@ -1,7 +1,8 @@
 #pragma once
 
-#define MAX_OBJECTS_COUNT	50
+#define MAX_OBJECTS_COUNT	10
 
+class Renderer;
 class Object;
 class SceneMgr
 {
@@ -11,9 +12,10 @@ public:
 
 	void CreateObject(float x, float y, float z, float r = 1.0f, float g = 1.0f, float b = 1.0f);
 
-	void Update();
+	void Update(float fTime);
 	void Render();
 	void Clear();
+	void Delete(int index);
 	Object* GetObj(int iIndex)
 	{
 		if (iIndex >= m_iObjectSize)
@@ -25,5 +27,7 @@ public:
 private:
 	Object*		m_ObjectList[MAX_OBJECTS_COUNT];
 	int			m_iObjectSize;
+	Renderer*	m_pRenderer;
+	DWORD		m_dwTime;
 };
 

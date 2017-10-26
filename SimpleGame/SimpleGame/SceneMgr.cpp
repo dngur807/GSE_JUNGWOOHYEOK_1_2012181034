@@ -43,10 +43,6 @@ void SceneMgr::CreateObject(float x, float y, float z,  float r, float g, float 
 		m_ObjectList[m_iObjectSize] = pobj;
 		++m_iObjectSize;
 	}
-	else
-	{
-		cout << "Å©±â ²Ë Âü" << endl;
-	}
 		
 }
 

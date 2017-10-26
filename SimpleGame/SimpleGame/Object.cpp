@@ -55,14 +55,13 @@ void Object::Update(float fTime)
 }
 void Object::Move(float fTime)
 {
-	m_vDir.Normalize();
 	if (m_tInfo.vPos.x <= m_fTarget)
 	{
 		m_vDir.x = m_vPrevDir.x;
 		if (m_fTarget - m_tInfo.vPos.x <= 20)
 		{
-		//	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
-		//	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
+			m_vPrevDir.x = (rand() % 10 + 1) * 0.1f ;
+			m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 			m_fTarget = -250;
 		}
 	}
@@ -97,6 +96,8 @@ void Object::Move(float fTime)
 			m_fTargetY = 250;
 		}
 	}
+
+	
 
 	float Time = fTime * 0.001f ;
 

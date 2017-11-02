@@ -5,10 +5,11 @@ class Object
 {
 public:
 	Object();
+	Object(int iType);
 	~Object();
 
 public:
-	void Update(float fTime);
+	int Update(float fTime);
 	void SetInfo(OBJ_INFO& info)
 	{
 		m_tInfo = info; 
@@ -21,6 +22,9 @@ public:
 	void SetIsColl(bool iscoll) { m_IsCollision = iscoll; }
 
 	bool GetIsDestory() { return m_IsDestory; }
+
+	int	 GetType() { return m_iType; }
+	void Initialize();
 private:
 	OBJ_INFO	m_tInfo;
 	float		m_fSpeed;
@@ -36,6 +40,12 @@ private:
 	bool		m_IsDestory;
 	float		m_fLife;
 
+
+	float		m_CurR;
+	float		m_CurG;
+	float		m_CurB;
 	float		m_fLifeTime;
+	float		m_fTime;
+	int		m_iType;
 };
 

@@ -53,7 +53,7 @@ void MouseInput(int button, int state, int x, int y)
 		//Å¬¸¯
 		//Object* pobj = new Object;;
 	//	pobj->SetInfo(OBJ_INFO(x - 250, 250 - y  , 0, 20, rand() % 10 * 0.1f, rand() % 10 * 0.1f, rand() % 10 * 0.1f, 1));
-		g_SceneMgr->CreateObject(x - 250, 250 - y , 0);
+		g_SceneMgr->CreateObject(x - 250, 250 - y , 0 , OBJECT_CHARACTER);
 	}
 	RenderScene();
 }
@@ -69,6 +69,8 @@ void SpecialKeyInput(int key, int x, int y)
 }
 void ObjectCreate()
 {
+	g_SceneMgr->CreateObject(0, 0, 0, OBJECT_BUILDING);
+
 //	for ( int i = 0 ; i < MAX_OBJECTS_COUNT; ++i)
 //		g_SceneMgr->CreateObject(rand() % 500 - 250, rand() % 500 - 250  , 0);
 }

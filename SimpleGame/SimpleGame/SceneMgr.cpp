@@ -93,7 +93,7 @@ void SceneMgr::Update(float fTime)
 					}
 
 
-					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, m_vecObject[j]->GetInfo().size);
+					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, m_vecObject[j]->GetInfo().size , m_vecObject[j]->GetDamege());
 				}
 
 

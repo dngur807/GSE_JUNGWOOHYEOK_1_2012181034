@@ -17,12 +17,12 @@ public:
 
 	const OBJ_INFO& GetInfo() { return m_tInfo; }
 
-	bool CollisionCheck(float x, float y, int size);
+	bool CollisionCheck(float x, float y, int size, float damage);
 	void Move(float fTime);
 	void SetIsColl(bool iscoll) { m_IsCollision = iscoll; }
 
 	bool GetIsDestory() { return m_IsDestory; }
-
+	float GetDamege() { return m_fDamage; }
 	int	 GetType() { return m_iType; }
 	void Initialize();
 private:

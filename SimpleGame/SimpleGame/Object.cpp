@@ -17,7 +17,7 @@ Object::Object()
 	m_fLife = 100.0f;
 	m_IsCollision = false;
 	m_IsDestory = false;
-
+	m_fDamage = 0.0f;
 	m_PrevColl = false;
 	m_fCollTime = 0.0f;
 
@@ -58,7 +58,7 @@ Object::Object(int type)
 
 	m_PrevColl = false;
 	m_fCollTime = 0.0f;
-
+	m_fDamage = 0.0f;
 	m_iType = type;
 	Initialize();
 }
@@ -217,6 +217,7 @@ void Object::Initialize()
 		m_CurG = 1.0f;
 		m_CurB = 0.0f;
 		m_tInfo.a = 1.0f;
+		m_fDamage = 30.0f;
 		break;
 	case OBJECT_CHARACTER:
 		m_fLife = 10;
@@ -226,6 +227,7 @@ void Object::Initialize()
 		m_tInfo.g = m_CurG = 1.0f;
 		m_tInfo.b = m_CurB = 1.0f;
 		m_tInfo.a = 1.0f;
+		m_fDamage = 30.0f;
 		break;
 	case OBJECT_BULLET:
 		m_fLife = 20;
@@ -235,10 +237,11 @@ void Object::Initialize()
 		m_tInfo.g = m_CurG = 0.0f;
 		m_tInfo.b = m_CurB = 0.0f;
 		m_tInfo.a = 1.0f;
+		m_fDamage = 10.0f;
 		break;
 	}
 }
-bool Object::CollisionCheck(float x, float y, int size)
+bool Object::CollisionCheck(float x, float y, int size , float damage)
 {
 	RECT	rcMyRect;
 	RECT	rcYouRect;
@@ -256,7 +259,7 @@ bool Object::CollisionCheck(float x, float y, int size)
 	RECT rc;
 	if (IntersectRect(&rc, &rcMyRect, &rcYouRect))
 	{
-		m_fLife -= 30.0f;
+		m_fLife -= damage;
 		m_IsCollision = true;
 		return true;
 	}

@@ -17,7 +17,7 @@ typedef struct MYVector
 		y /= len;
 		z /= len;
 	}
-	MYVector& operator * (float _fnum)
+	MYVector operator * (float _fnum)
 	{
 		MYVector v;
 		v.x = x * _fnum;

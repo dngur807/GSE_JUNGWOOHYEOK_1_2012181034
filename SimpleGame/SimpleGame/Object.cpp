@@ -18,6 +18,10 @@ Object::Object()
 	m_IsCollision = false;
 	m_IsDestory = false;
 
+	m_PrevColl = false;
+	m_fCollTime = 0.0f;
+
+
 	Initialize();
 
 }
@@ -52,6 +56,9 @@ Object::Object(int type)
 	m_IsCollision = false;
 	m_IsDestory = false;
 
+	m_PrevColl = false;
+	m_fCollTime = 0.0f;
+
 	m_iType = type;
 	Initialize();
 }
@@ -82,7 +89,28 @@ int Object::Update(float fTime)
 	}
 	//m_fLifeTime -= 0.01f;
 
+	if (m_IsCollision == true)
+	{
+		m_PrevColl = true;
+	}
 
+	if (m_PrevColl)
+	{
+		m_fCollTime += fTime * 0.001f;
+		if (m_fCollTime < 0.1f)
+		{
+			//說除儀
+			m_tInfo.r = 1.0f;
+			m_tInfo.g = 0.0f;
+			m_tInfo.b = 1.0f;
+			m_tInfo.a = 1.0f;
+		}
+		else
+		{
+			m_PrevColl = false;
+			m_fCollTime = 0.0f;
+		}
+	}
 	if (m_iType != OBJECT_BULLET)
 		Move(fTime);
 	else
@@ -102,13 +130,8 @@ int Object::Update(float fTime)
 			return 1;
 		}
 	}
-	if (m_IsCollision)
+	if (m_PrevColl)
 	{
-		//說除儀
-		m_tInfo.r = 1.0f;
-		m_tInfo.g = 0.0f;
-		m_tInfo.b = 1.0f;
-		m_tInfo.a = 1.0f;
 	}
 	else
 	{
@@ -169,10 +192,6 @@ void Object::Move(float fTime)
 	}
 
 
-
-
-	
-
 	float Time = fTime * 0.001f ;
 
 //	cout << fTime << endl;
@@ -202,7 +221,7 @@ void Object::Initialize()
 	case OBJECT_CHARACTER:
 		m_fLife = 10;
 		m_fSpeed = 300;
-		m_tInfo.size = 10;
+		m_tInfo.size = 10 ;
 		m_tInfo.r = m_CurR = 1.0f;
 		m_tInfo.g = m_CurG = 1.0f;
 		m_tInfo.b = m_CurB = 1.0f;
@@ -237,7 +256,7 @@ bool Object::CollisionCheck(float x, float y, int size)
 	RECT rc;
 	if (IntersectRect(&rc, &rcMyRect, &rcYouRect))
 	{
-		m_fLife -= 0.1f;
+		m_fLife -= 30.0f;
 		m_IsCollision = true;
 		return true;
 	}

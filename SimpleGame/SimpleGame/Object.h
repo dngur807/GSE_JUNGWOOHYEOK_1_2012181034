@@ -46,6 +46,11 @@ private:
 	float		m_CurB;
 	float		m_fLifeTime;
 	float		m_fTime;
-	int		m_iType;
+
+	float		m_fDamage;
+	int			m_iType;
+
+	bool		m_PrevColl;
+	float		m_fCollTime;
 };
 

@@ -15,6 +15,7 @@
 #include <ctime>
 
 #include <mmsystem.h>
+#include <algorithm>
 
 #define OBJECT_BUILDING		0
 #define OBJECT_CHARACTER		1
@@ -22,4 +23,8 @@
 #define OBJECT_ARROW		3
 
 
+
+#define UPDATE_RETURN_DELETE	1
+#define UPDATE_RETURN_CREATE_BULLET	2
+#define UPDATE_RETURN_CREATE_ARROW	3
 using namespace std;

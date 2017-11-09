@@ -4,34 +4,37 @@
 
 Object::Object()
 {
-	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
-	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
-	m_vDir.x = (rand() % 10 + 1) * 0.1f;
-	m_vDir.y = (rand() % 10 + 1) * 0.1f;
-	m_fSpeed = 100;
-	m_fTarget = 250.0f;
-	m_fTargetY = 250.0f;
-	m_fDegree = 0;
-	m_fTime = 0.0f;
-	m_fLifeTime = 10000.0f;
-	m_fLife = 100.0f;
-	m_IsCollision = false;
-	m_IsDestory = false;
-	m_fDamage = 0.0f;
-	m_PrevColl = false;
-	m_fCollTime = 0.0f;
-
-
-	Initialize();
-
+	m_iType = OBJECT_CHARACTER;
+	m_pME = nullptr;
 }
 Object::Object(int type)
 {
+	m_iType = type;
+	m_pME = nullptr;
+}
+
+Object::~Object()
+{
+}
+
+void Object::Initialize()
+{
+	m_texCharacter = 0;
+	m_IsVisible = true;
+	m_IsCollision = false;
+	m_IsDestory = false;
+	m_PrevColl = false;
+	m_IsVisible = true;
+	m_fCollTime = 0.0f;
+
 	m_fTime = 0.0f;
 	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
 	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 	m_vDir.x = (rand() % 10 + 1) * 0.1f;
 	m_vDir.y = (rand() % 10 + 1) * 0.1f;
+	m_fTarget = 250.0f;
+	m_fTargetY = 250.0f;
+	m_fLifeTime = 10000.0f;
 
 	int i = rand() % 4;
 	if (i == 0)
@@ -46,35 +49,64 @@ Object::Object(int type)
 		m_vDir.y *= -1;
 	}
 
-	m_fSpeed = 100;
-	m_fTarget = 250.0f;
-	m_fTargetY = 250.0f;
-	m_fDegree = 0;
 
-	m_fLifeTime = 10000.0f;
-	m_fLife = 100.0f;
-	m_IsCollision = false;
-	m_IsDestory = false;
-
-	m_PrevColl = false;
-	m_fCollTime = 0.0f;
-	m_fDamage = 0.0f;
-	m_iType = type;
-	Initialize();
-}
-
-Object::~Object()
-{
+	switch (m_iType)
+	{
+	case OBJECT_BUILDING:
+		m_fLife = 500;
+		m_fSpeed = 0;
+		m_tInfo.size = 100;
+		m_CurR = 1.0f;
+		m_CurG = 1.0f;
+		m_CurB = 0.0f;
+		m_tInfo.a = 1.0f;
+		m_fDamage = 30.0f;
+		break;
+	case OBJECT_CHARACTER:
+		m_fLife = 10;
+		m_fSpeed = 300;
+		m_tInfo.size = 10;
+		m_tInfo.r = m_CurR = 1.0f;
+		m_tInfo.g = m_CurG = 1.0f;
+		m_tInfo.b = m_CurB = 1.0f;
+		m_tInfo.a = 1.0f;
+		m_fDamage = 30.0f;
+		break;
+	case OBJECT_BULLET:
+		m_fLife = 20;
+		m_fSpeed = 600;
+		m_tInfo.size = 4;
+		m_tInfo.r = m_CurR = 1.0f;
+		m_tInfo.g = m_CurG = 0.0f;
+		m_tInfo.b = m_CurB = 0.0f;
+		m_tInfo.a = 1.0f;
+		m_fDamage = 10.0f;
+		break;
+	case OBJECT_ARROW:
+		m_fLife = 10;
+		m_fSpeed = 100;
+		m_tInfo.size = 4;
+		m_tInfo.r = m_CurR = 0.0f;
+		m_tInfo.g = m_CurG = 1.0f;
+		m_tInfo.b = m_CurB = 0.0f;
+		m_tInfo.a = 1.0f;
+		m_fDamage = 10.0f;
+		break;
+	}
 }
 
 int Object::Update(float fTime)
 {
-
 	if (m_fLife <= 0 || m_fLifeTime <= 0)
 		m_IsDestory = true;
-	if (m_IsDestory == true)
-		return 1 ;
 
+	if (m_IsDestory == true)
+		return 1;
+
+	if (m_pME && m_pME ->GetIsDestory())
+	{
+		m_pME = nullptr;
+	}
 	int CreateBullet = 0;//2이면 생성
 
 	if (m_iType == OBJECT_BUILDING)
@@ -83,10 +115,21 @@ int Object::Update(float fTime)
 		if (m_fTime > 0.5f)
 		{
 			m_fTime = 0;
-			CreateBullet = 2;
+			CreateBullet = UPDATE_RETURN_CREATE_BULLET;
 		}
 		//총알 0.5초마다 생성
 	}
+	else if (m_iType == OBJECT_CHARACTER)
+	{
+		m_fTime += fTime * 0.001f;
+		if (m_fTime > 0.5f)
+		{
+			m_fTime = 0;
+			CreateBullet = UPDATE_RETURN_CREATE_ARROW;
+		}
+	}
+
+
 	//m_fLifeTime -= 0.01f;
 
 	if (m_IsCollision == true)
@@ -97,7 +140,7 @@ int Object::Update(float fTime)
 	if (m_PrevColl)
 	{
 		m_fCollTime += fTime * 0.001f;
-		if (m_fCollTime < 0.1f)
+		if (m_fCollTime < 0.05f)
 		{
 			//빨간색
 			m_tInfo.r = 1.0f;
@@ -111,15 +154,13 @@ int Object::Update(float fTime)
 			m_fCollTime = 0.0f;
 		}
 	}
-	if (m_iType != OBJECT_BULLET)
+	if (m_iType != OBJECT_BULLET && m_iType != OBJECT_ARROW)
 		Move(fTime);
 	else
 	{
 		float Time = fTime * 0.001f;
 		m_vDir.Normalize();
 		m_tInfo.vPos += m_vDir * (m_fSpeed * Time);
-
-
 		if (m_tInfo.vPos.x >= 250
 			|| m_tInfo.vPos.x < -250
 			|| m_tInfo.vPos.y >= 250
@@ -127,7 +168,7 @@ int Object::Update(float fTime)
 			)
 		{
 			m_IsDestory = true;
-			return 1;
+			return UPDATE_RETURN_DELETE;
 		}
 	}
 	if (m_PrevColl)
@@ -149,10 +190,8 @@ void Object::Move(float fTime)
 		m_vDir.x = m_vPrevDir.x;
 		if (m_fTarget - m_tInfo.vPos.x <= 20)
 		{
-
 			m_vPrevDir.x = -1.0f;
-			//m_vPrevDir.x = (rand() % 10 + 1) * 0.1f  * -1.0f;
-			//m_vPrevDir.y = (rand() % 10 + 1) * 0.1f * -1.0f;
+			//m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 			m_fTarget = -250;
 		}
 	}
@@ -162,7 +201,6 @@ void Object::Move(float fTime)
 		if (m_tInfo.vPos.x - m_fTarget <= 20)
 		{
 			m_vPrevDir.x = 1.0f;
-			//m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
 			//m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
 			m_fTarget = 250;
 		}
@@ -174,9 +212,8 @@ void Object::Move(float fTime)
 		if (m_fTargetY - m_tInfo.vPos.y <= 20)
 		{
 			m_fTargetY = -250;
+		//	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
 			m_vPrevDir.y = -1.0f;
-			//m_vPrevDir.x = (rand() % 10 + 1) * 0.1f ;
-			//m_vPrevDir.y = (rand() % 10 + 1) * 0.1f ;
 		}
 	}
 	else if (m_tInfo.vPos.y >= m_fTargetY)
@@ -185,80 +222,38 @@ void Object::Move(float fTime)
 		if (m_tInfo.vPos.y - m_fTargetY <= 20)
 		{
 			m_vPrevDir.y = 1.0f;
-		//	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f ;
-		//	m_vPrevDir.y = (rand() % 10 + 1) * 0.1f ;
+	//		m_vPrevDir.x = (rand() % 10 + 1) * 0.1f ;
 			m_fTargetY = 250;
 		}
 	}
 
 
 	float Time = fTime * 0.001f ;
-
-//	cout << fTime << endl;
 	
 	m_vDir.Normalize();
 	m_tInfo.vPos += m_vDir * ( m_fSpeed * Time) ;
 
-	//cout << m_tInfo.vPos.x << "\t" << m_tInfo.vPos .y<< endl;
 }
-void Object::Initialize()
-{
-//#define OBJECT_BUILDING		0
-//#define OBJECT_CHARACTER		1
-//#define OBJECT_BULLET		2
-//#define OBJECT_ARROW		3
-	switch (m_iType)
-	{
-	case OBJECT_BUILDING:
-		m_fLife = 500;
-		m_fSpeed = 0;
-		m_tInfo.size = 50;
-		m_CurR = 1.0f;
-		m_CurG = 1.0f;
-		m_CurB = 0.0f;
-		m_tInfo.a = 1.0f;
-		m_fDamage = 30.0f;
-		break;
-	case OBJECT_CHARACTER:
-		m_fLife = 10;
-		m_fSpeed = 300;
-		m_tInfo.size = 10 ;
-		m_tInfo.r = m_CurR = 1.0f;
-		m_tInfo.g = m_CurG = 1.0f;
-		m_tInfo.b = m_CurB = 1.0f;
-		m_tInfo.a = 1.0f;
-		m_fDamage = 30.0f;
-		break;
-	case OBJECT_BULLET:
-		m_fLife = 20;
-		m_fSpeed = 600;
-		m_tInfo.size = 4;
-		m_tInfo.r = m_CurR = 1.0f;
-		m_tInfo.g = m_CurG = 0.0f;
-		m_tInfo.b = m_CurB = 0.0f;
-		m_tInfo.a = 1.0f;
-		m_fDamage = 10.0f;
-		break;
-	}
-}
+
 bool Object::CollisionCheck(float x, float y, int size , float damage)
 {
 	RECT	rcMyRect;
 	RECT	rcYouRect;
-	rcMyRect.left = m_tInfo.vPos.x - m_tInfo.size / 2;
-	rcMyRect.top = m_tInfo.vPos.y - m_tInfo.size / 2;
-	rcMyRect.right = m_tInfo.vPos.x + m_tInfo.size / 2;
-	rcMyRect.bottom = m_tInfo.vPos.y + m_tInfo.size / 2;
+	rcMyRect.left = (long)(m_tInfo.vPos.x - m_tInfo.size / 2);
+	rcMyRect.top = (long)(m_tInfo.vPos.y - m_tInfo.size / 2);
+	rcMyRect.right = (long)(m_tInfo.vPos.x + m_tInfo.size / 2);
+	rcMyRect.bottom = (long)(m_tInfo.vPos.y + m_tInfo.size / 2);
 
 
-	rcYouRect.left = x - size / 2;
-	rcYouRect.top = y - size / 2;
-	rcYouRect.right = x + size / 2;
-	rcYouRect.bottom = y + size / 2;
+	rcYouRect.left = (long)(x - size / 2);
+	rcYouRect.top = (long)(y - size / 2);
+	rcYouRect.right = (long)(x + size / 2);
+	rcYouRect.bottom = (long)(y + size / 2);
 
+	
 	RECT rc;
 	if (IntersectRect(&rc, &rcMyRect, &rcYouRect))
-	{
+	{	
 		m_fLife -= damage;
 		m_IsCollision = true;
 		return true;

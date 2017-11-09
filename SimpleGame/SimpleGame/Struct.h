@@ -38,7 +38,7 @@ typedef struct Obj_Info
 {
 	MYVECTOR	vPos;
 
-	int size;
+	float size;
 
 	float r;
 	float g;
@@ -51,7 +51,7 @@ typedef struct Obj_Info
 		size = 100;
 		r = g = b = a = 1;
 	}
-	Obj_Info(float _x , float _y , float _z , int _size , float _r , float _g, float _b, float _a)
+	Obj_Info(float _x , float _y , float _z , float _size , float _r , float _g, float _b, float _a)
 	{
 		vPos.x = _x;
 		vPos.y = _y;

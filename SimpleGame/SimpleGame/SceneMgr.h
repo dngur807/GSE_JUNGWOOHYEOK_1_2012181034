@@ -12,8 +12,8 @@ public:
 	SceneMgr();
 	~SceneMgr();
 
-	void CreateObject(float x, float y, float z, int iType, float r = 1.0f, float g = 1.0f, float b = 1.0f );
-
+	void CreateObject(float x, float y, float z, int iType, float r = 1.0f, float g = 1.0f, float b = 1.0f, Object* pme = nullptr , GLuint iTexture = 0);
+	void Initialize();
 	void Update(float fTime);
 	void Render();
 	void Clear();

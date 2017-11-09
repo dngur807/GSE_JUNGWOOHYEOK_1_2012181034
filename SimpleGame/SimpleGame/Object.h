@@ -20,11 +20,20 @@ public:
 	bool CollisionCheck(float x, float y, int size, float damage);
 	void Move(float fTime);
 	void SetIsColl(bool iscoll) { m_IsCollision = iscoll; }
-
+	void SetVisible(bool Isvisible) { m_IsVisible = Isvisible; }
+	bool GetIsVisible() { return m_IsVisible; }
 	bool GetIsDestory() { return m_IsDestory; }
 	float GetDamege() { return m_fDamage; }
 	int	 GetType() { return m_iType; }
 	void Initialize();
+
+
+	bool GetPrevColl() { return m_PrevColl; }
+	float GetLife() { return m_fLife; }
+	Object* GetMe() { return m_pME; }
+	void SetMe(Object* pme) { m_pME = pme; }
+	GLuint GetTexture() { return m_texCharacter; }
+	void SetTexture(GLuint texture) {m_texCharacter = texture;}
 private:
 	OBJ_INFO	m_tInfo;
 	float		m_fSpeed;
@@ -35,7 +44,6 @@ private:
 	MYVECTOR	m_vPos;
 	MYVECTOR	m_vDir;
 	MYVECTOR	m_vPrevDir;
-	float		m_fDegree;
 	bool		m_IsCollision;
 	bool		m_IsDestory;
 	float		m_fLife;
@@ -52,5 +60,9 @@ private:
 
 	bool		m_PrevColl;
 	float		m_fCollTime;
+private:
+	bool		m_IsVisible;
+	Object*		m_pME;
+	GLuint		m_texCharacter;
 };
 

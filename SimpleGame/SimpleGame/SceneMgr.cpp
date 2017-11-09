@@ -5,10 +5,6 @@
 SceneMgr::SceneMgr()
 {
 	//ZeroMemory(m_ObjectList, 0);
-	m_vecObject.reserve(MAX_OBJECTS_COUNT);
-
-	m_iObjectSize = 0;
-	m_dwTime = 0;
 }
 
 
@@ -18,8 +14,23 @@ SceneMgr::~SceneMgr()
 
 }
 
-void SceneMgr::CreateObject(float x, float y, float z , int iType ,  float r, float g, float b)
+void SceneMgr::CreateObject(float x, float y, float z , int iType ,  float r, float g, float b , Object* pme , GLuint iTexture)
 {
+	Object* pobj = new Object(iType);
+	pobj->SetInfo(OBJ_INFO(x, y, z, 20, r, g, b, 1.0f));
+	pobj->SetMe(pme);//미사일 발사 객체 알기위해서
+	pobj->Initialize();
+	pobj->SetTexture(iTexture);
+	m_vecObject.push_back(pobj);
+}
+
+void SceneMgr::Initialize()
+{
+	m_vecObject.reserve(MAX_OBJECTS_COUNT);
+	m_iObjectSize = 0;
+	m_dwTime = 0;
+	CreateObject(0, 0, 0, OBJECT_BUILDING , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
+
 	if (m_pRenderer == nullptr)
 	{
 		m_pRenderer = new Renderer(500, 500);
@@ -31,34 +42,10 @@ void SceneMgr::CreateObject(float x, float y, float z , int iType ,  float r, fl
 		}
 	}
 
-
-	Object* pobj = new Object(iType);
-	pobj->SetInfo(OBJ_INFO(x, y, z, 20, r, g, b, 1.0f));
-	pobj->Initialize();
-	m_vecObject.push_back(pobj);
-
-
-
-
-	/*if (m_iObjectSize < MAX_OBJECTS_COUNT)
-	{
-		Object* pobj = new Object;
-		pobj->SetInfo(OBJ_INFO(x, y, z, 20 , r, g, b , 1.0f));
-		if (m_ObjectList[m_iObjectSize])
-		{
-			delete m_ObjectList[m_iObjectSize];
-			m_ObjectList[m_iObjectSize] = nullptr;
-		}
-		m_ObjectList[m_iObjectSize] = pobj;
-		++m_iObjectSize;
-	}
-		*/
 }
 
 void SceneMgr::Update(float fTime)
 {
-
-
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{
 		m_vecObject[i]->SetIsColl(false);
@@ -68,7 +55,9 @@ void SceneMgr::Update(float fTime)
 			if (i != j)
 			{
 				if (m_vecObject[i]->GetIsDestory() == false &&
-					m_vecObject[j]->GetIsDestory() == false)
+					m_vecObject[i]->GetPrevColl() == false && 
+					m_vecObject[j]->GetIsDestory() == false && 
+					m_vecObject[j] ->GetPrevColl() == false )
 				{
 					if (m_vecObject[i]->GetType() == OBJECT_CHARACTER
 						&& m_vecObject[j]->GetType() == OBJECT_CHARACTER)
@@ -92,16 +81,49 @@ void SceneMgr::Update(float fTime)
 						continue;
 					}
 
+					else if (m_vecObject[i]->GetType() == OBJECT_ARROW
+						&& m_vecObject[j]->GetType() == OBJECT_BULLET)
+					{
+						continue;
+					}
 
-					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, m_vecObject[j]->GetInfo().size , m_vecObject[j]->GetDamege());
+					else if (m_vecObject[i]->GetType() == OBJECT_BULLET
+						&& m_vecObject[j]->GetType() == OBJECT_ARROW)
+					{
+						continue;
+					}
+					else if (m_vecObject[i]->GetType() == OBJECT_CHARACTER &&
+						m_vecObject[j]->GetType() == OBJECT_ARROW
+						&& m_vecObject[i] == m_vecObject[j]->GetMe())
+					{
+						continue;
+					}
+					else if (m_vecObject[i]->GetType() == OBJECT_ARROW
+						&& m_vecObject[j] ->GetType() == OBJECT_CHARACTER
+						&& m_vecObject[i]->GetMe() == m_vecObject[j])
+					{
+						continue;
+					}
+		
+					float fCurLife = m_vecObject[j]->GetLife();
+					m_vecObject[j]->CollisionCheck(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, (int)m_vecObject[i]->GetInfo().size, m_vecObject[i]->GetLife());
+					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, (int)m_vecObject[j]->GetInfo().size , fCurLife);
 				}
-
-
 			}
 		}
-		if (m_vecObject[i]->Update(fTime) == 2)
+		int iUpdate = 0;
+		if ((iUpdate = m_vecObject[i]->Update(fTime)))
 		{
-			CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_BULLET);
+			switch (iUpdate)
+			{
+			case UPDATE_RETURN_CREATE_BULLET:
+				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_BULLET);
+				break;
+			case UPDATE_RETURN_CREATE_ARROW:
+				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_ARROW , 1 , 1 , 1 , m_vecObject[i]);
+				break;
+			}
+			
 
 		}
 
@@ -110,11 +132,6 @@ void SceneMgr::Update(float fTime)
 			Delete(i);
 		}
 	}
-
-	
-
-
-	
 }
 void SceneMgr::Render()
 {
@@ -124,29 +141,24 @@ void SceneMgr::Render()
 
 		if (pobj && pobj ->GetIsDestory() == false)
 		{
-			m_pRenderer->DrawSolidRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z
-				, pobj->GetInfo().size
-				, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a);
+			if (pobj->GetTexture() != 0)
+			{
+				m_pRenderer->DrawTexturedRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, 0, pobj->GetInfo().size, 1, 1, 1, 1, pobj->GetTexture());
+			}
+			else
+			{
+				m_pRenderer->DrawSolidRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z
+					, pobj->GetInfo().size
+					, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a);
+			}
 		}
 	}
 
 }
 void SceneMgr::Clear()
 {
-	/*for (int i = 0; i < m_iObjectSize; ++i)
-	{
-		if (m_ObjectList[i])
-		{
-			delete m_ObjectList[i];
-			m_ObjectList[i] = nullptr;
-		}
-	}
-	m_iObjectSize = 0;*/
-	for (int i = 0; i < m_vecObject.size(); ++i)
-	{
-		delete m_vecObject[i];
-	}
-	m_vecObject.clear();
+	auto iter = remove_if(m_vecObject.begin(), m_vecObject.end(), [](const Object* pobj) {return pobj;});
+	m_vecObject.erase(iter , m_vecObject.end());
 }
 
 void SceneMgr::Delete(int index)

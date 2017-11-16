@@ -22,9 +22,14 @@
 #define OBJECT_BULLET		2
 #define OBJECT_ARROW		3
 
-
+#define TEAM_1		0
+#define TEAM_2		1
+#define TEAM_NEUTRAL		2
 
 #define UPDATE_RETURN_DELETE	1
 #define UPDATE_RETURN_CREATE_BULLET	2
 #define UPDATE_RETURN_CREATE_ARROW	3
+
+#define WINCX	500
+#define WINCY	800
 using namespace std;

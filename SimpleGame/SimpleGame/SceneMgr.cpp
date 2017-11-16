@@ -5,6 +5,9 @@
 SceneMgr::SceneMgr()
 {
 	//ZeroMemory(m_ObjectList, 0);
+	m_fTimeUP = 0.0f;
+	m_fTimeDOWN = 0.0f;
+	m_IsCreateColltime = false;
 }
 
 
@@ -14,9 +17,9 @@ SceneMgr::~SceneMgr()
 
 }
 
-void SceneMgr::CreateObject(float x, float y, float z , int iType ,  float r, float g, float b , Object* pme , GLuint iTexture)
+void SceneMgr::CreateObject(float x, float y, float z , int iType , int iTeam ,  float r, float g, float b , Object* pme , GLuint iTexture)
 {
-	Object* pobj = new Object(iType);
+	Object* pobj = new Object(iType , iTeam);
 	pobj->SetInfo(OBJ_INFO(x, y, z, 20, r, g, b, 1.0f));
 	pobj->SetMe(pme);//미사일 발사 객체 알기위해서
 	pobj->Initialize();
@@ -29,16 +32,26 @@ void SceneMgr::Initialize()
 	m_vecObject.reserve(MAX_OBJECTS_COUNT);
 	m_iObjectSize = 0;
 	m_dwTime = 0;
-	CreateObject(0, 0, 0, OBJECT_BUILDING , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
+	
+
+
+	CreateObject(0, WINCY / 2  - 50, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/test.png"));
+	CreateObject(-160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/test.png"));
+	CreateObject(160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/test.png"));
+
+
+	CreateObject(0, -WINCY / 2 + 50, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
+	CreateObject(-160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
+	CreateObject(160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
+
 
 	if (m_pRenderer == nullptr)
 	{
-		m_pRenderer = new Renderer(500, 500);
+		m_pRenderer = new Renderer(WINCX, WINCY);
 
 		if (!m_pRenderer->IsInitialized())
 		{
 			std::cout << "Renderer could not be initialized.. \n";
-
 		}
 	}
 
@@ -46,6 +59,21 @@ void SceneMgr::Initialize()
 
 void SceneMgr::Update(float fTime)
 {
+	m_fTimeUP += fTime * 0.001f;
+	m_fTimeDOWN += fTime * 0.001f;
+	if (m_fTimeUP > 5.0f)
+	{
+		m_fTimeUP = 0.0f;
+		//북쪽 진영에 5초당 1개 캐릭터 생성
+		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1);
+	}
+	if (m_fTimeDOWN > 7.0f)
+	{
+		m_IsCreateColltime = true;
+		m_fTimeDOWN = 0.0f;
+	//	CreateObject(rand() % WINCX - WINCX / 2, rand() % (WINCY / 2 - 200) * -1, 0, OBJECT_CHARACTER, TEAM_2);
+	}
+
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{
 		m_vecObject[i]->SetIsColl(false);
@@ -80,7 +108,11 @@ void SceneMgr::Update(float fTime)
 					{
 						continue;
 					}
-
+					else if (m_vecObject[i]->GetType() == OBJECT_ARROW
+						&& m_vecObject[j]->GetType() == OBJECT_ARROW)
+					{
+						continue;
+					}
 					else if (m_vecObject[i]->GetType() == OBJECT_ARROW
 						&& m_vecObject[j]->GetType() == OBJECT_BULLET)
 					{
@@ -104,7 +136,10 @@ void SceneMgr::Update(float fTime)
 					{
 						continue;
 					}
-		
+					else if (m_vecObject[i]->GetTeam() == m_vecObject[j]->GetTeam())
+					{
+						continue;
+					}
 					float fCurLife = m_vecObject[j]->GetLife();
 					m_vecObject[j]->CollisionCheck(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, (int)m_vecObject[i]->GetInfo().size, m_vecObject[i]->GetLife());
 					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, (int)m_vecObject[j]->GetInfo().size , fCurLife);
@@ -117,14 +152,12 @@ void SceneMgr::Update(float fTime)
 			switch (iUpdate)
 			{
 			case UPDATE_RETURN_CREATE_BULLET:
-				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_BULLET);
+				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_BULLET , m_vecObject[i] ->GetTeam());
 				break;
 			case UPDATE_RETURN_CREATE_ARROW:
-				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_ARROW , 1 , 1 , 1 , m_vecObject[i]);
+				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_ARROW, m_vecObject[i]->GetTeam(), 1 , 1 , 1 , m_vecObject[i]);
 				break;
 			}
-			
-
 		}
 
 		if (m_vecObject[i]->GetIsDestory() == true)
@@ -135,6 +168,7 @@ void SceneMgr::Update(float fTime)
 }
 void SceneMgr::Render()
 {
+
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{
 		Object* pobj = m_vecObject[i];
@@ -176,4 +210,26 @@ void SceneMgr::Delete(int index)
 			m_vecObject.pop_back();
 		}
 	}
+}
+
+void SceneMgr::MakeCharacter(int x, int y)
+{
+	if (GetCollTime())
+	{
+		if (y < 0)
+		{
+			m_IsCreateColltime = false;
+			m_fTimeDOWN = 0.0f;
+			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2);
+		}
+		else
+		{
+			printf("적진영 입니다. \n");
+		}
+	}
+	else
+	{
+		printf(" %.1f초 남았습니다\n", 7 - m_fTimeDOWN);
+	}
+
 }

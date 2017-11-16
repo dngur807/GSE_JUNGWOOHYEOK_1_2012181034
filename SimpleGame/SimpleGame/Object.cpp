@@ -5,11 +5,13 @@
 Object::Object()
 {
 	m_iType = OBJECT_CHARACTER;
+	m_iTeam = TEAM_NEUTRAL;
 	m_pME = nullptr;
 }
-Object::Object(int type)
+Object::Object(int type , int iTeam)
 {
 	m_iType = type;
+	m_iTeam = iTeam;
 	m_pME = nullptr;
 }
 
@@ -63,35 +65,75 @@ void Object::Initialize()
 		m_fDamage = 30.0f;
 		break;
 	case OBJECT_CHARACTER:
+	{
 		m_fLife = 10;
 		m_fSpeed = 300;
 		m_tInfo.size = 10;
-		m_tInfo.r = m_CurR = 1.0f;
-		m_tInfo.g = m_CurG = 1.0f;
-		m_tInfo.b = m_CurB = 1.0f;
 		m_tInfo.a = 1.0f;
 		m_fDamage = 30.0f;
+
+		if (m_iTeam == TEAM_1)
+		{
+			m_tInfo.r = m_CurR = 1.0f;
+			m_tInfo.g = m_CurG = 0.0f;
+			m_tInfo.b = m_CurB = 0.0f;
+		}
+		else
+		{
+			m_tInfo.r = m_CurR = 0.0f;
+			m_tInfo.g = m_CurG = 0.0f;
+			m_tInfo.b = m_CurB = 1.0f;
+		}
+	}
 		break;
 	case OBJECT_BULLET:
+	{
 		m_fLife = 20;
 		m_fSpeed = 600;
 		m_tInfo.size = 4;
-		m_tInfo.r = m_CurR = 1.0f;
-		m_tInfo.g = m_CurG = 0.0f;
-		m_tInfo.b = m_CurB = 0.0f;
+
+		if (m_iTeam == TEAM_1)
+		{
+			m_tInfo.r = m_CurR = 1.0f;
+			m_tInfo.g = m_CurG = 0.0f;
+			m_tInfo.b = m_CurB = 0.0f;
+			m_vDir.y = -1.0f;
+		}
+		else
+		{
+			m_tInfo.r = m_CurR = 0.0f;
+			m_tInfo.g = m_CurG = 0.0f;
+			m_tInfo.b = m_CurB = 1.0f;
+			m_vDir.y = 1.0f;
+		}
+			
 		m_tInfo.a = 1.0f;
 		m_fDamage = 10.0f;
+	}
 		break;
 	case OBJECT_ARROW:
+	{
 		m_fLife = 10;
 		m_fSpeed = 100;
 		m_tInfo.size = 4;
-		m_tInfo.r = m_CurR = 0.0f;
-		m_tInfo.g = m_CurG = 1.0f;
-		m_tInfo.b = m_CurB = 0.0f;
+		if (m_iTeam == TEAM_1)
+		{
+			m_tInfo.r = m_CurR = 0.5f;
+			m_tInfo.g = m_CurG = 0.2f;
+			m_tInfo.b = m_CurB = 0.7f;
+			m_vDir.y = -1.0f;
+		}
+		else
+		{
+			m_tInfo.r = m_CurR = 1.0f;
+			m_tInfo.g = m_CurG = 1.0f;
+			m_tInfo.b = m_CurB = 0.0f;
+			m_vDir.y = 1.0f;
+		}
 		m_tInfo.a = 1.0f;
 		m_fDamage = 10.0f;
 		break;
+	}
 	}
 }
 
@@ -107,12 +149,13 @@ int Object::Update(float fTime)
 	{
 		m_pME = nullptr;
 	}
+
 	int CreateBullet = 0;//2이면 생성
 
 	if (m_iType == OBJECT_BUILDING)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 0.5f)
+		if (m_fTime > 5.0f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_BULLET;
@@ -122,7 +165,7 @@ int Object::Update(float fTime)
 	else if (m_iType == OBJECT_CHARACTER)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 0.5f)
+		if (m_fTime > 3.0f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_ARROW;
@@ -155,16 +198,19 @@ int Object::Update(float fTime)
 		}
 	}
 	if (m_iType != OBJECT_BULLET && m_iType != OBJECT_ARROW)
-		Move(fTime);
+	{
+		//	Move(fTime);
+	}
+	
 	else
 	{
 		float Time = fTime * 0.001f;
 		m_vDir.Normalize();
 		m_tInfo.vPos += m_vDir * (m_fSpeed * Time);
-		if (m_tInfo.vPos.x >= 250
-			|| m_tInfo.vPos.x < -250
-			|| m_tInfo.vPos.y >= 250
-			|| m_tInfo.vPos.y < -250
+		if (m_tInfo.vPos.x >= WINCX / 2
+			|| m_tInfo.vPos.x < -WINCX / 2
+			|| m_tInfo.vPos.y >= WINCY / 2
+			|| m_tInfo.vPos.y < -WINCY / 2
 			)
 		{
 			m_IsDestory = true;
@@ -192,7 +238,7 @@ void Object::Move(float fTime)
 		{
 			m_vPrevDir.x = -1.0f;
 			//m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
-			m_fTarget = -250;
+			m_fTarget = -WINCX /2;
 		}
 	}
 	else if (m_tInfo.vPos.x >= m_fTarget)
@@ -202,7 +248,7 @@ void Object::Move(float fTime)
 		{
 			m_vPrevDir.x = 1.0f;
 			//m_vPrevDir.y = (rand() % 10 + 1) * 0.1f;
-			m_fTarget = 250;
+			m_fTarget = WINCX / 2;
 		}
 	}
 
@@ -211,7 +257,7 @@ void Object::Move(float fTime)
 		m_vDir.y = m_vPrevDir.y;
 		if (m_fTargetY - m_tInfo.vPos.y <= 20)
 		{
-			m_fTargetY = -250;
+			m_fTargetY = -WINCY / 2;
 		//	m_vPrevDir.x = (rand() % 10 + 1) * 0.1f;
 			m_vPrevDir.y = -1.0f;
 		}
@@ -223,7 +269,7 @@ void Object::Move(float fTime)
 		{
 			m_vPrevDir.y = 1.0f;
 	//		m_vPrevDir.x = (rand() % 10 + 1) * 0.1f ;
-			m_fTargetY = 250;
+			m_fTargetY = WINCY / 2;
 		}
 	}
 

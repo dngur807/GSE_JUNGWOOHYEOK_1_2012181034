@@ -23,7 +23,7 @@ void RenderScene(void)
 	g_prevTime = dwStartTime;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	g_SceneMgr->Update((float)dwElapsedTime);
 	g_SceneMgr->Render();
@@ -39,7 +39,8 @@ void MouseInput(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		g_SceneMgr->CreateObject((float)(x - 250), (float)(250 - y) , 0 , OBJECT_CHARACTER , 1 , 1 ,1 , nullptr );
+		g_SceneMgr->MakeCharacter((float)(x - WINCX / 2), (float)(WINCY / 2 - y));
+		//g_SceneMgr->CreateObject((float)(x - WINCX / 2), (float)(WINCY / 2 - y) , 0 , OBJECT_CHARACTER , 1 , 1 ,1 , nullptr );
 	}
 	RenderScene();
 }
@@ -60,7 +61,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(500, 500);
+	glutInitWindowSize(WINCX, WINCY);
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();

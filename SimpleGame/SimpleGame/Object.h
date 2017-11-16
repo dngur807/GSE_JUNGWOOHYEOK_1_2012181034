@@ -5,7 +5,7 @@ class Object
 {
 public:
 	Object();
-	Object(int iType);
+	Object(int iType , int iTeam);
 	~Object();
 
 public:
@@ -34,6 +34,8 @@ public:
 	void SetMe(Object* pme) { m_pME = pme; }
 	GLuint GetTexture() { return m_texCharacter; }
 	void SetTexture(GLuint texture) {m_texCharacter = texture;}
+
+	int GetTeam() { return m_iTeam; }
 private:
 	OBJ_INFO	m_tInfo;
 	float		m_fSpeed;
@@ -64,5 +66,8 @@ private:
 	bool		m_IsVisible;
 	Object*		m_pME;
 	GLuint		m_texCharacter;
+
+private://11월16일 추가
+	int			m_iTeam;
 };
 

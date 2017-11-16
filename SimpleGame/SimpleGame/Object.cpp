@@ -199,7 +199,7 @@ int Object::Update(float fTime)
 	}
 	if (m_iType != OBJECT_BULLET && m_iType != OBJECT_ARROW)
 	{
-		//	Move(fTime);
+		Move(fTime);
 	}
 	
 	else

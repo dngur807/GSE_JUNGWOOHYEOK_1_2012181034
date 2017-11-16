@@ -155,7 +155,7 @@ int Object::Update(float fTime)
 	if (m_iType == OBJECT_BUILDING)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 5.0f)
+		if (m_fTime > 10.0f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_BULLET;

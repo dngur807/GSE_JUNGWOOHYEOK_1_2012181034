@@ -30,6 +30,7 @@ public:
 
 	bool GetPrevColl() { return m_PrevColl; }
 	float GetLife() { return m_fLife; }
+	float GetMaxLife() { return m_fMaxLife; }
 	Object* GetMe() { return m_pME; }
 	void SetMe(Object* pme) { m_pME = pme; }
 	GLuint GetTexture() { return m_texCharacter; }
@@ -49,7 +50,7 @@ private:
 	bool		m_IsCollision;
 	bool		m_IsDestory;
 	float		m_fLife;
-
+	float		m_fMaxLife;
 
 	float		m_CurR;
 	float		m_CurG;
@@ -69,5 +70,11 @@ private:
 
 private://11월16일 추가
 	int			m_iTeam;
+	//11월 23일
+public:
+	float GetRenderingLevel() { return m_fRenderingLevel; }
+private:	
+	float		m_fRenderingLevel;
+
 };
 

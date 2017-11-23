@@ -7,12 +7,16 @@ Object::Object()
 	m_iType = OBJECT_CHARACTER;
 	m_iTeam = TEAM_NEUTRAL;
 	m_pME = nullptr;
+	m_fRenderingLevel = 0.0f;
+	m_fMaxLife = 0;
 }
 Object::Object(int type , int iTeam)
 {
 	m_iType = type;
 	m_iTeam = iTeam;
 	m_pME = nullptr;
+	m_fRenderingLevel = 0.0f;
+	m_fMaxLife = 0;
 }
 
 Object::~Object()
@@ -55,7 +59,7 @@ void Object::Initialize()
 	switch (m_iType)
 	{
 	case OBJECT_BUILDING:
-		m_fLife = 500;
+		m_fMaxLife = m_fLife = 500;
 		m_fSpeed = 0;
 		m_tInfo.size = 100;
 		m_CurR = 1.0f;
@@ -63,15 +67,17 @@ void Object::Initialize()
 		m_CurB = 0.0f;
 		m_tInfo.a = 1.0f;
 		m_fDamage = 30.0f;
+		m_fRenderingLevel = 0.1f;
 		break;
 	case OBJECT_CHARACTER:
 	{
-		m_fLife = 10;
+		m_fMaxLife = m_fLife = 10;
 		m_fSpeed = 300;
-		m_tInfo.size = 10;
+		//m_tInfo.size = 10;
+		m_tInfo.size = 72;
 		m_tInfo.a = 1.0f;
 		m_fDamage = 30.0f;
-
+		m_fRenderingLevel = 0.2f;
 		if (m_iTeam == TEAM_1)
 		{
 			m_tInfo.r = m_CurR = 1.0f;
@@ -88,10 +94,10 @@ void Object::Initialize()
 		break;
 	case OBJECT_BULLET:
 	{
-		m_fLife = 20;
+		m_fMaxLife = m_fLife = 20;
 		m_fSpeed = 600;
 		m_tInfo.size = 4;
-
+		m_fRenderingLevel = 0.3f;
 		if (m_iTeam == TEAM_1)
 		{
 			m_tInfo.r = m_CurR = 1.0f;
@@ -113,9 +119,11 @@ void Object::Initialize()
 		break;
 	case OBJECT_ARROW:
 	{
-		m_fLife = 10;
+		m_fMaxLife = m_fLife = 10;
 		m_fSpeed = 100;
 		m_tInfo.size = 4;
+		m_fRenderingLevel = 0.3f;
+
 		if (m_iTeam == TEAM_1)
 		{
 			m_tInfo.r = m_CurR = 0.5f;

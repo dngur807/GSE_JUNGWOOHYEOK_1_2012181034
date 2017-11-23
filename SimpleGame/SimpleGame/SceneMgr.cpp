@@ -65,7 +65,7 @@ void SceneMgr::Update(float fTime)
 	{
 		m_fTimeUP = 0.0f;
 		//북쪽 진영에 5초당 1개 캐릭터 생성
-		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1);
+		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/corsair.png"));
 	}
 	if (m_fTimeDOWN > 7.0f)
 	{
@@ -175,15 +175,29 @@ void SceneMgr::Render()
 
 		if (pobj && pobj ->GetIsDestory() == false)
 		{
+
+			if (pobj->GetType() == OBJECT_BUILDING || pobj->GetType() == OBJECT_CHARACTER)
+			{
+				//게이지 추가
+				if (pobj->GetTeam() == TEAM_1)
+				{
+					m_pRenderer->DrawSolidRectGauge(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y + pobj->GetInfo().size / 2, pobj->GetInfo().vPos.z, pobj->GetInfo().size , 5, 1.0f, 0, 0, 1.0f, pobj->GetLife() / pobj->GetMaxLife(), pobj->GetRenderingLevel());
+				}
+				else if (pobj->GetTeam() == TEAM_2)
+				{
+					m_pRenderer->DrawSolidRectGauge(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y + pobj->GetInfo().size / 2, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 5, 0, 0, 1, 1.0f, pobj->GetLife() / pobj->GetMaxLife(), pobj->GetRenderingLevel());
+				}
+			}
 			if (pobj->GetTexture() != 0)
 			{
-				m_pRenderer->DrawTexturedRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, 0, pobj->GetInfo().size, 1, 1, 1, 1, pobj->GetTexture());
+				m_pRenderer->DrawTexturedRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, 0, pobj->GetInfo().size, 1, 1, 1, 1, pobj->GetTexture() , pobj->GetRenderingLevel());
 			}
 			else
 			{
+				
 				m_pRenderer->DrawSolidRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z
 					, pobj->GetInfo().size
-					, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a);
+					, pobj->GetInfo().r, pobj->GetInfo().g, pobj->GetInfo().b, pobj->GetInfo().a , pobj->GetRenderingLevel());
 			}
 		}
 	}
@@ -220,7 +234,7 @@ void SceneMgr::MakeCharacter(int x, int y)
 		{
 			m_IsCreateColltime = false;
 			m_fTimeDOWN = 0.0f;
-			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2);
+			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/scout.png"));
 		}
 		else
 		{

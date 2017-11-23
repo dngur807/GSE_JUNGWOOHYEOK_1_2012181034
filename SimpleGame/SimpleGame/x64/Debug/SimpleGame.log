@@ -1,2 +1,5 @@
-﻿  SimpleGame.vcxproj -> D:\00.Study\02.KPU\00.수업 자료\18.게임소프트웨어공학\GSE_Project\GSE_JUNGWOOHYEOK_1_2012181034\SimpleGame\x64\Debug\SimpleGame.exe
+﻿  SceneMgr.cpp
+d:\00.study\02.kpu\00.수업 자료\18.게임소프트웨어공학\gse_project\gse_jungwoohyeok_1_2012181034\simplegame\simplegame\scenemgr.cpp(68): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\00.study\02.kpu\00.수업 자료\18.게임소프트웨어공학\gse_project\gse_jungwoohyeok_1_2012181034\simplegame\simplegame\scenemgr.cpp(237): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  SimpleGame.vcxproj -> D:\00.Study\02.KPU\00.수업 자료\18.게임소프트웨어공학\GSE_Project\GSE_JUNGWOOHYEOK_1_2012181034\SimpleGame\x64\Debug\SimpleGame.exe
   SimpleGame.vcxproj -> D:\00.Study\02.KPU\00.수업 자료\18.게임소프트웨어공학\GSE_Project\GSE_JUNGWOOHYEOK_1_2012181034\SimpleGame\x64\Debug\SimpleGame.pdb (Partial PDB)

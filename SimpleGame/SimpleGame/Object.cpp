@@ -163,17 +163,17 @@ int Object::Update(float fTime)
 	if (m_iType == OBJECT_BUILDING)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 10.0f)
+		if (m_fTime > 1.0f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_BULLET;
 		}
-		//총알 0.5초마다 생성
+		//총알 1초마다 생성
 	}
 	else if (m_iType == OBJECT_CHARACTER)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 3.0f)
+		if (m_fTime > 0.50f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_ARROW;

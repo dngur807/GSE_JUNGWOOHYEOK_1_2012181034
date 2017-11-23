@@ -61,13 +61,13 @@ void SceneMgr::Update(float fTime)
 {
 	m_fTimeUP += fTime * 0.001f;
 	m_fTimeDOWN += fTime * 0.001f;
-	if (m_fTimeUP > 5.0f)
+	if (m_fTimeUP > 1.00f)
 	{
 		m_fTimeUP = 0.0f;
-		//북쪽 진영에 5초당 1개 캐릭터 생성
+		//북쪽 진영에 0.5초당 1개 캐릭터 생성
 		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/corsair.png"));
 	}
-	if (m_fTimeDOWN > 7.0f)
+	if (m_fTimeDOWN > 0.50f)
 	{
 		m_IsCreateColltime = true;
 		m_fTimeDOWN = 0.0f;
@@ -243,7 +243,7 @@ void SceneMgr::MakeCharacter(int x, int y)
 	}
 	else
 	{
-		printf(" %.1f초 남았습니다\n", 7 - m_fTimeDOWN);
+		printf(" %.1f초 남았습니다\n", 0.50f - m_fTimeDOWN);
 	}
 
 }

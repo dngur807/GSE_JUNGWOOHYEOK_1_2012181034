@@ -37,6 +37,7 @@ public:
 	void SetTexture(GLuint texture) {m_texCharacter = texture;}
 
 	int GetTeam() { return m_iTeam; }
+	MYVECTOR GetDir() { return m_vDir; }
 private:
 	OBJ_INFO	m_tInfo;
 	float		m_fSpeed;
@@ -63,6 +64,7 @@ private:
 
 	bool		m_PrevColl;
 	float		m_fCollTime;
+
 private:
 	bool		m_IsVisible;
 	Object*		m_pME;
@@ -73,8 +75,25 @@ private://11월16일 추가
 	//11월 23일
 public:
 	float GetRenderingLevel() { return m_fRenderingLevel; }
+	float GetParticleTime() { return m_fParticleTime; }
 private:	
 	float		m_fRenderingLevel;
 
+
+	// 11 - 30
+
+public:
+	bool GetIsAnimation() { return m_IsAnimation; }
+	int GetCurAniNumber() {return m_iCurAniNumber;}
+	int GetMaxAniNumber() { return m_iMaxAniNumber; }
+	void FrameMove(float fTime);
+private:
+	bool	m_IsAnimation;
+	float	m_fCurAnimationTime;
+	float	m_fMaxAnimationTime;
+	int		m_iCurAniNumber;
+	int		m_iMaxAniNumber;
+
+	float	m_fParticleTime;
 };
 

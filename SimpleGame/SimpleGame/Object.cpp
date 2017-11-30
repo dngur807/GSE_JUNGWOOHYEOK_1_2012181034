@@ -9,6 +9,16 @@ Object::Object()
 	m_pME = nullptr;
 	m_fRenderingLevel = 0.0f;
 	m_fMaxLife = 0;
+
+
+	m_IsAnimation = false;
+	m_fCurAnimationTime = 0;
+	m_fMaxAnimationTime = 0;
+	m_iCurAniNumber = 0;
+	m_iMaxAniNumber = 0 ;
+	m_fParticleTime = 0;
+
+
 }
 Object::Object(int type , int iTeam)
 {
@@ -17,6 +27,15 @@ Object::Object(int type , int iTeam)
 	m_pME = nullptr;
 	m_fRenderingLevel = 0.0f;
 	m_fMaxLife = 0;
+
+	m_fParticleTime = 0;
+
+	m_IsAnimation = false;
+	m_fCurAnimationTime = 0;
+	m_fMaxAnimationTime = 0;
+	m_iCurAniNumber = 0;
+	m_iMaxAniNumber = 0;
+
 }
 
 Object::~Object()
@@ -66,7 +85,7 @@ void Object::Initialize()
 		m_CurG = 1.0f;
 		m_CurB = 0.0f;
 		m_tInfo.a = 1.0f;
-		m_fDamage = 30.0f;
+		m_fDamage = 10.0f;
 		m_fRenderingLevel = 0.1f;
 		break;
 	case OBJECT_CHARACTER:
@@ -74,18 +93,35 @@ void Object::Initialize()
 		m_fMaxLife = m_fLife = 10;
 		m_fSpeed = 300;
 		//m_tInfo.size = 10;
-		m_tInfo.size = 72;
+		m_tInfo.size = 100;
 		m_tInfo.a = 1.0f;
-		m_fDamage = 30.0f;
+		m_fDamage = 10.0f;
 		m_fRenderingLevel = 0.2f;
+
+		
+
 		if (m_iTeam == TEAM_1)
 		{
 			m_tInfo.r = m_CurR = 1.0f;
 			m_tInfo.g = m_CurG = 0.0f;
 			m_tInfo.b = m_CurB = 0.0f;
+
+			m_IsAnimation = true;
+			m_fCurAnimationTime = 0;
+			m_fMaxAnimationTime = 0.1f;
+			m_iCurAniNumber = 0;
+			m_iMaxAniNumber = 8;
+
+			
 		}
 		else
 		{
+		
+			m_IsAnimation = true;
+			m_fCurAnimationTime = 0;
+			m_fMaxAnimationTime = 0.1f;
+			m_iCurAniNumber = 0;
+			m_iMaxAniNumber = 25;
 			m_tInfo.r = m_CurR = 0.0f;
 			m_tInfo.g = m_CurG = 0.0f;
 			m_tInfo.b = m_CurB = 1.0f;
@@ -114,10 +150,11 @@ void Object::Initialize()
 		}
 			
 		m_tInfo.a = 1.0f;
-		m_fDamage = 10.0f;
+		m_fDamage = 5.0f;
 	}
 		break;
 	case OBJECT_ARROW:
+
 	{
 		m_fMaxLife = m_fLife = 10;
 		m_fSpeed = 100;
@@ -139,9 +176,24 @@ void Object::Initialize()
 			m_vDir.y = 1.0f;
 		}
 		m_tInfo.a = 1.0f;
-		m_fDamage = 10.0f;
+		m_fDamage = 5.0f;
 		break;
 	}
+	}
+}
+
+void Object::FrameMove(float fTime)
+{
+	float fsec = fTime * 0.001f;
+
+	m_fCurAnimationTime += fsec;
+
+	if (m_fCurAnimationTime > m_fMaxAnimationTime)
+	{
+		m_fCurAnimationTime = 0;
+		++m_iCurAniNumber;
+		if (m_iCurAniNumber >= m_iMaxAniNumber)
+			m_iCurAniNumber = 0;
 	}
 }
 
@@ -158,12 +210,22 @@ int Object::Update(float fTime)
 		m_pME = nullptr;
 	}
 
+	if (m_IsAnimation)
+	{
+		FrameMove(fTime);
+	}
 	int CreateBullet = 0;//2이면 생성
+
+
+	//파티클 시간
+	m_fParticleTime += fTime * 0.001f;
+	if (m_fParticleTime > 1.0f)
+		m_fParticleTime = 0;
 
 	if (m_iType == OBJECT_BUILDING)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 1.0f)
+		if (m_fTime > 2.0f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_BULLET;
@@ -173,7 +235,7 @@ int Object::Update(float fTime)
 	else if (m_iType == OBJECT_CHARACTER)
 	{
 		m_fTime += fTime * 0.001f;
-		if (m_fTime > 0.50f)
+		if (m_fTime > 0.05f)
 		{
 			m_fTime = 0;
 			CreateBullet = UPDATE_RETURN_CREATE_ARROW;
@@ -308,6 +370,7 @@ bool Object::CollisionCheck(float x, float y, int size , float damage)
 	RECT rc;
 	if (IntersectRect(&rc, &rcMyRect, &rcYouRect))
 	{	
+		
 		m_fLife -= damage;
 		m_IsCollision = true;
 		return true;

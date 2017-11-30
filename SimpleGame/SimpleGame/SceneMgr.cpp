@@ -65,7 +65,7 @@ void SceneMgr::Update(float fTime)
 	{
 		m_fTimeUP = 0.0f;
 		//북쪽 진영에 0.5초당 1개 캐릭터 생성
-		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/corsair.png"));
+		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/run_animation.png"));
 	}
 	if (m_fTimeDOWN > 0.50f)
 	{
@@ -140,9 +140,9 @@ void SceneMgr::Update(float fTime)
 					{
 						continue;
 					}
-					float fCurLife = m_vecObject[j]->GetLife();
-					m_vecObject[j]->CollisionCheck(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, (int)m_vecObject[i]->GetInfo().size, m_vecObject[i]->GetLife());
-					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, (int)m_vecObject[j]->GetInfo().size , fCurLife);
+					m_vecObject[j]->CollisionCheck(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, (int)m_vecObject[i]->GetInfo().size, m_vecObject[i]->GetDamege());
+
+					m_vecObject[i]->CollisionCheck(m_vecObject[j]->GetInfo().vPos.x, m_vecObject[j]->GetInfo().vPos.y, (int)m_vecObject[j]->GetInfo().size , m_vecObject[j]->GetDamege());
 				}
 			}
 		}
@@ -168,6 +168,9 @@ void SceneMgr::Update(float fTime)
 }
 void SceneMgr::Render()
 {
+	//레벨은 큰값으로 주자 0.1~0.99
+
+	m_pRenderer->DrawTexturedRect(0, 0, 0, 800 ,1, 1, 1, 1, m_pRenderer->CreatePngTexture("./Textures/test1.png"), 0.99);//
 
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{
@@ -178,6 +181,7 @@ void SceneMgr::Render()
 
 			if (pobj->GetType() == OBJECT_BUILDING || pobj->GetType() == OBJECT_CHARACTER)
 			{
+				
 				//게이지 추가
 				if (pobj->GetTeam() == TEAM_1)
 				{
@@ -185,12 +189,25 @@ void SceneMgr::Render()
 				}
 				else if (pobj->GetTeam() == TEAM_2)
 				{
+					if (pobj->GetType() == OBJECT_BUILDING)
+					{
+						//printf("%f\n", pobj->GetLife());
+					}
 					m_pRenderer->DrawSolidRectGauge(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y + pobj->GetInfo().size / 2, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 5, 0, 0, 1, 1.0f, pobj->GetLife() / pobj->GetMaxLife(), pobj->GetRenderingLevel());
 				}
 			}
-			if (pobj->GetTexture() != 0)
+			if (pobj->GetTexture() != 0 )
 			{
-				m_pRenderer->DrawTexturedRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, 0, pobj->GetInfo().size, 1, 1, 1, 1, pobj->GetTexture() , pobj->GetRenderingLevel());
+				if (pobj->GetIsAnimation() == true)
+				{
+					m_pRenderer->DrawTexturedRectSeq(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, 0, pobj->GetInfo().size, 1, 1, 1, 1, pobj->GetTexture(), pobj->GetCurAniNumber(), 0, pobj->GetMaxAniNumber(), 1, pobj->GetRenderingLevel());
+				}
+				else
+					m_pRenderer->DrawTexturedRect(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, 0, pobj->GetInfo().size, 1, 1, 1, 1, pobj->GetTexture() , pobj->GetRenderingLevel());
+			}
+			else if (pobj->GetType() == OBJECT_BULLET  )
+			{
+				m_pRenderer->DrawParticle(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 1, 1, 1 , 1, pobj->GetDir().x, pobj->GetDir().y, m_pRenderer->CreatePngTexture("./Textures/Spark1.png"), pobj->GetParticleTime());
 			}
 			else
 			{
@@ -234,7 +251,7 @@ void SceneMgr::MakeCharacter(int x, int y)
 		{
 			m_IsCreateColltime = false;
 			m_fTimeDOWN = 0.0f;
-			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/scout.png"));
+			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/player.png"));
 		}
 		else
 		{

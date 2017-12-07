@@ -95,5 +95,7 @@ private:
 	int		m_iMaxAniNumber;
 
 	float	m_fParticleTime;
+
+
 };
 

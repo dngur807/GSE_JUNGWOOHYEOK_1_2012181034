@@ -3,7 +3,7 @@
 #define MAX_OBJECTS_COUNT	10
 
 
-
+#include "Sound.h"
 class Renderer;
 class Object;
 class SceneMgr
@@ -37,5 +37,14 @@ private:
 	float		m_fTimeUP;
 	float		m_fTimeDOWN;
 	bool		m_IsCreateColltime;
+private:
+	GLuint		textureSpark1;
+	GLuint		textureBack;
+	GLuint		texturePlayer;
+	GLuint		textureEnemyBulid;
+	GLuint		textureNexus;
+	GLuint		textureEnemy;
+	Sound			m_Sound;
+
 };
 

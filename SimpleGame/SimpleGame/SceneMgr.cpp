@@ -2,6 +2,9 @@
 #include "SceneMgr.h"
 #include "Object.h"
 #include "Renderer.h"
+
+
+
 SceneMgr::SceneMgr()
 {
 	//ZeroMemory(m_ObjectList, 0);
@@ -34,17 +37,6 @@ void SceneMgr::Initialize()
 	m_dwTime = 0;
 	
 
-
-	CreateObject(0, WINCY / 2  - 50, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/test.png"));
-	CreateObject(-160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/test.png"));
-	CreateObject(160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/test.png"));
-
-
-	CreateObject(0, -WINCY / 2 + 50, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
-	CreateObject(-160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
-	CreateObject(160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/nexus.png"));
-
-
 	if (m_pRenderer == nullptr)
 	{
 		m_pRenderer = new Renderer(WINCX, WINCY);
@@ -55,17 +47,46 @@ void SceneMgr::Initialize()
 		}
 	}
 
+
+	textureEnemyBulid =  m_pRenderer->CreatePngTexture("./Textures/test.png");
+	textureNexus = m_pRenderer->CreatePngTexture("./Textures/nexus.png");
+
+	textureSpark1 = m_pRenderer->CreatePngTexture("./Textures/Spark1.png");
+	textureBack = m_pRenderer->CreatePngTexture("./Textures/test1.png");
+	texturePlayer = m_pRenderer->CreatePngTexture("./Textures/player.png");
+
+	textureEnemy = m_pRenderer->CreatePngTexture("./Textures/run_animation.png");
+
+
+	int soundBG =m_Sound.CreateSound("./SoundSamples/MF-W-90.XM");
+	m_Sound.PlaySoundW(soundBG, true, 0.2f);
+
+	CreateObject(0, WINCY / 2  - 50, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, textureEnemyBulid);
+	CreateObject(-160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, textureEnemyBulid);
+	CreateObject(160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, textureEnemyBulid);
+
+
+	CreateObject(0, -WINCY / 2 + 50, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, textureNexus);
+	CreateObject(-160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, textureNexus);
+	CreateObject(160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, textureNexus);
+
+
+
+
 }
 
 void SceneMgr::Update(float fTime)
 {
+	if (m_pRenderer)
+		m_pRenderer->SetSceneTransform(0 , 0 , 1 , 1);
+
 	m_fTimeUP += fTime * 0.001f;
 	m_fTimeDOWN += fTime * 0.001f;
-	if (m_fTimeUP > 1.00f)
+	if (m_fTimeUP > 3.00f)
 	{
 		m_fTimeUP = 0.0f;
 		//북쪽 진영에 0.5초당 1개 캐릭터 생성
-		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , m_pRenderer->CreatePngTexture("./Textures/run_animation.png"));
+		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , textureEnemy);
 	}
 	if (m_fTimeDOWN > 0.50f)
 	{
@@ -168,9 +189,11 @@ void SceneMgr::Update(float fTime)
 }
 void SceneMgr::Render()
 {
-	//레벨은 큰값으로 주자 0.1~0.99
 
-	m_pRenderer->DrawTexturedRect(0, 0, 0, 800 ,1, 1, 1, 1, m_pRenderer->CreatePngTexture("./Textures/test1.png"), 0.99);//
+	m_pRenderer->DrawText(WINCX / 2 * -1, WINCY / 2 - 100, GLUT_BITMAP_8_BY_13, 1, 1, 1, "2012181034 JWH");
+
+	//레벨은 큰값으로 주자 0.1~0.99
+	m_pRenderer->DrawTexturedRect(0, 0, 0, 800 ,1, 1, 1, 1, textureBack, 0.99);//
 
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{
@@ -207,7 +230,7 @@ void SceneMgr::Render()
 			}
 			else if (pobj->GetType() == OBJECT_BULLET  )
 			{
-				m_pRenderer->DrawParticle(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 1, 1, 1 , 1, pobj->GetDir().x, pobj->GetDir().y, m_pRenderer->CreatePngTexture("./Textures/Spark1.png"), pobj->GetParticleTime());
+				m_pRenderer->DrawParticle(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 1, 1, 1 , 1, pobj->GetDir().x, pobj->GetDir().y, textureSpark1, pobj->GetParticleTime());
 			}
 			else
 			{
@@ -251,7 +274,9 @@ void SceneMgr::MakeCharacter(int x, int y)
 		{
 			m_IsCreateColltime = false;
 			m_fTimeDOWN = 0.0f;
-			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, 1, 1, 1, nullptr, m_pRenderer->CreatePngTexture("./Textures/player.png"));
+			
+
+			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, 1, 1, 1, nullptr, texturePlayer);
 		}
 		else
 		{

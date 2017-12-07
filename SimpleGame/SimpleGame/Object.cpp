@@ -73,8 +73,6 @@ void Object::Initialize()
 		m_vDir.x *= -1;
 		m_vDir.y *= -1;
 	}
-
-
 	switch (m_iType)
 	{
 	case OBJECT_BUILDING:
@@ -97,8 +95,6 @@ void Object::Initialize()
 		m_tInfo.a = 1.0f;
 		m_fDamage = 10.0f;
 		m_fRenderingLevel = 0.2f;
-
-		
 
 		if (m_iTeam == TEAM_1)
 		{

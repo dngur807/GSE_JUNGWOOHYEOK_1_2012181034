@@ -190,10 +190,12 @@ void SceneMgr::Update(float fTime)
 void SceneMgr::Render()
 {
 
-	m_pRenderer->DrawText(WINCX / 2 * -1, WINCY / 2 - 100, GLUT_BITMAP_8_BY_13, 1, 1, 1, "2012181034 JWH");
+	
 
 	//레벨은 큰값으로 주자 0.1~0.99
 	m_pRenderer->DrawTexturedRect(0, 0, 0, 800 ,1, 1, 1, 1, textureBack, 0.99);//
+
+	m_pRenderer->DrawText(0, 0, GLUT_BITMAP_8_BY_13, 1, 1, 1, "2012181034 JWH");
 
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{

@@ -1,2 +1,11 @@
-﻿  SimpleGame.vcxproj -> D:\00.Study\02.KPU\00.수업 자료\18.게임소프트웨어공학\GSE_Project\GSE_JUNGWOOHYEOK_1_2012181034\SimpleGame\x64\Release\SimpleGame.exe
+﻿  SceneMgr.cpp
+SceneMgr.cpp(89): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+SceneMgr.cpp(196): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+SceneMgr.cpp(281): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다.
+  11 of 691 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  SimpleGame.vcxproj -> D:\00.Study\02.KPU\00.수업 자료\18.게임소프트웨어공학\GSE_Project\GSE_JUNGWOOHYEOK_1_2012181034\SimpleGame\x64\Release\SimpleGame.exe
   SimpleGame.vcxproj -> D:\00.Study\02.KPU\00.수업 자료\18.게임소프트웨어공학\GSE_Project\GSE_JUNGWOOHYEOK_1_2012181034\SimpleGame\x64\Release\SimpleGame.pdb (Full PDB)

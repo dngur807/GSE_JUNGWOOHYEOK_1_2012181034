@@ -95,6 +95,9 @@ private:
 	int		m_iMaxAniNumber;
 
 	float	m_fParticleTime;
+public:
+	float	m_fParticleAlpha;
+	bool	m_IsTex;
 
 
 };

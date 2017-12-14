@@ -12,7 +12,7 @@ public:
 	SceneMgr();
 	~SceneMgr();
 
-	void CreateObject(float x, float y, float z, int iType, int iTeam, float r = 1.0f, float g = 1.0f, float b = 1.0f, Object* pme = nullptr , GLuint iTexture = 0);
+	void CreateObject(float x, float y, float z, int iType, int iTeam , bool IsTex , float r = 1.0f, float g = 1.0f, float b = 1.0f, Object* pme = nullptr , GLuint iTexture = 0 );
 	void Initialize();
 	void Update(float fTime);
 	void Render();
@@ -44,7 +44,11 @@ private:
 	GLuint		textureEnemyBulid;
 	GLuint		textureNexus;
 	GLuint		textureEnemy;
+	GLuint		textureSnow;
 	Sound			m_Sound;
+
+
+	float		fTestTime;
 
 };
 

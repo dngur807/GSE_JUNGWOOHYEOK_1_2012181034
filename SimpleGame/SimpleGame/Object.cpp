@@ -17,7 +17,7 @@ Object::Object()
 	m_iCurAniNumber = 0;
 	m_iMaxAniNumber = 0 ;
 	m_fParticleTime = 0;
-
+	m_fParticleAlpha = 1.0f;
 
 }
 Object::Object(int type , int iTeam)
@@ -35,7 +35,7 @@ Object::Object(int type , int iTeam)
 	m_fMaxAnimationTime = 0;
 	m_iCurAniNumber = 0;
 	m_iMaxAniNumber = 0;
-
+	m_fParticleAlpha = 1.0f;
 }
 
 Object::~Object()
@@ -44,7 +44,10 @@ Object::~Object()
 
 void Object::Initialize()
 {
-	m_texCharacter = 0;
+	m_IsTex = false;
+
+	m_fParticleAlpha = 1.0f;
+	m_texCharacter = -1;
 	m_IsVisible = true;
 	m_IsCollision = false;
 	m_IsDestory = false;
@@ -127,7 +130,7 @@ void Object::Initialize()
 	case OBJECT_BULLET:
 	{
 		m_fMaxLife = m_fLife = 20;
-		m_fSpeed = 600;
+		m_fSpeed = 200;
 		m_tInfo.size = 4;
 		m_fRenderingLevel = 0.3f;
 		if (m_iTeam == TEAM_1)
@@ -214,9 +217,20 @@ int Object::Update(float fTime)
 
 
 	//파티클 시간
-	m_fParticleTime += fTime * 0.001f;
-	if (m_fParticleTime > 1.0f)
-		m_fParticleTime = 0;
+	if (m_iType == OBJECT_BULLET)
+	{
+		m_fParticleTime += fTime * 0.001f;
+		m_fParticleAlpha -= (fTime * 0.001f) * 0.5f  ;
+		if (m_fParticleTime > 5)
+		{
+			m_fParticleTime = 0;
+			m_fParticleAlpha = 0.0f;
+			m_IsDestory = true;
+		}
+	}
+	
+
+	
 
 	if (m_iType == OBJECT_BUILDING)
 	{

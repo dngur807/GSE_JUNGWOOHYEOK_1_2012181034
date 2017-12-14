@@ -11,6 +11,8 @@ SceneMgr::SceneMgr()
 	m_fTimeUP = 0.0f;
 	m_fTimeDOWN = 0.0f;
 	m_IsCreateColltime = false;
+
+	fTestTime = 0;
 }
 
 
@@ -20,15 +22,17 @@ SceneMgr::~SceneMgr()
 
 }
 
-void SceneMgr::CreateObject(float x, float y, float z , int iType , int iTeam ,  float r, float g, float b , Object* pme , GLuint iTexture)
+void SceneMgr::CreateObject(float x, float y, float z, int iType, int iTeam, bool IsTex, float r, float g, float b, Object * pme, GLuint iTexture)
 {
 	Object* pobj = new Object(iType , iTeam);
 	pobj->SetInfo(OBJ_INFO(x, y, z, 20, r, g, b, 1.0f));
 	pobj->SetMe(pme);//미사일 발사 객체 알기위해서
 	pobj->Initialize();
 	pobj->SetTexture(iTexture);
+	pobj->m_IsTex = IsTex;
 	m_vecObject.push_back(pobj);
 }
+
 
 void SceneMgr::Initialize()
 {
@@ -56,22 +60,19 @@ void SceneMgr::Initialize()
 	texturePlayer = m_pRenderer->CreatePngTexture("./Textures/player.png");
 
 	textureEnemy = m_pRenderer->CreatePngTexture("./Textures/run_animation.png");
-
+	textureSnow = m_pRenderer->CreatePngTexture("./Textures/Glow.png");
 
 	int soundBG =m_Sound.CreateSound("./SoundSamples/MF-W-90.XM");
 	m_Sound.PlaySoundW(soundBG, true, 0.2f);
 
-	CreateObject(0, WINCY / 2  - 50, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, textureEnemyBulid);
-	CreateObject(-160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, textureEnemyBulid);
-	CreateObject(160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, 1, 1, 1, nullptr, textureEnemyBulid);
+	CreateObject(0, WINCY / 2  - 50, 0, OBJECT_BUILDING, TEAM_1 , true, 1, 1, 1, nullptr, textureEnemyBulid);
+	CreateObject(-160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, true, 1, 1, 1, nullptr, textureEnemyBulid);
+	CreateObject(160, WINCY / 2 - 80, 0, OBJECT_BUILDING, TEAM_1, true, 1, 1, 1, nullptr, textureEnemyBulid);
 
 
-	CreateObject(0, -WINCY / 2 + 50, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, textureNexus);
-	CreateObject(-160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, textureNexus);
-	CreateObject(160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, 1, 1, 1, nullptr, textureNexus);
-
-
-
+	CreateObject(0, -WINCY / 2 + 50, 0, OBJECT_BUILDING, TEAM_2, true, 1, 1, 1, nullptr, textureNexus);
+	CreateObject(-160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, true, 1, 1, 1, nullptr, textureNexus);
+	CreateObject(160, -WINCY / 2 + 80, 0, OBJECT_BUILDING, TEAM_2, true, 1, 1, 1, nullptr, textureNexus);
 
 }
 
@@ -80,13 +81,19 @@ void SceneMgr::Update(float fTime)
 	if (m_pRenderer)
 		m_pRenderer->SetSceneTransform(0 , 0 , 1 , 1);
 
+
+	fTestTime += fTime * 0.001f;
+
+	//if (fTestTime > 2.0f)
+	//	fTestTime = 0;
+
 	m_fTimeUP += fTime * 0.001f;
 	m_fTimeDOWN += fTime * 0.001f;
 	if (m_fTimeUP > 3.00f)
 	{
 		m_fTimeUP = 0.0f;
 		//북쪽 진영에 0.5초당 1개 캐릭터 생성
-		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1  , 1, 1 ,1 , nullptr , textureEnemy);
+		CreateObject(rand() % WINCX  - WINCX / 2,  rand() % (WINCY / 2 - 200) , 0, OBJECT_CHARACTER, TEAM_1, true, 1, 1 ,1 , nullptr , textureEnemy);
 	}
 	if (m_fTimeDOWN > 0.50f)
 	{
@@ -173,10 +180,10 @@ void SceneMgr::Update(float fTime)
 			switch (iUpdate)
 			{
 			case UPDATE_RETURN_CREATE_BULLET:
-				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_BULLET , m_vecObject[i] ->GetTeam());
+				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_BULLET, m_vecObject[i] ->GetTeam(), false);
 				break;
 			case UPDATE_RETURN_CREATE_ARROW:
-				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_ARROW, m_vecObject[i]->GetTeam(), 1 , 1 , 1 , m_vecObject[i]);
+				CreateObject(m_vecObject[i]->GetInfo().vPos.x, m_vecObject[i]->GetInfo().vPos.y, m_vecObject[i]->GetInfo().vPos.z, OBJECT_ARROW, m_vecObject[i]->GetTeam(), false, 1 , 1 , 1 , m_vecObject[i]);
 				break;
 			}
 		}
@@ -197,6 +204,10 @@ void SceneMgr::Render()
 
 	m_pRenderer->DrawText(0, 0, GLUT_BITMAP_8_BY_13, 1, 1, 1, "2012181034 JWH");
 
+	
+
+	//눈 비 효과
+	m_pRenderer->DrawParticleClimate(0, 0, 0, 1, 1, 1, 1, 1, -0.1, -0.1, textureSnow, fTestTime, 0.01);
 	for (int i = 0; i < m_vecObject.size(); ++i)
 	{
 		Object* pobj = m_vecObject[i];
@@ -221,7 +232,7 @@ void SceneMgr::Render()
 					m_pRenderer->DrawSolidRectGauge(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y + pobj->GetInfo().size / 2, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 5, 0, 0, 1, 1.0f, pobj->GetLife() / pobj->GetMaxLife(), pobj->GetRenderingLevel());
 				}
 			}
-			if (pobj->GetTexture() != 0 )
+			if (pobj->m_IsTex == true  && pobj->GetType() != OBJECT_BULLET)
 			{
 				if (pobj->GetIsAnimation() == true)
 				{
@@ -232,7 +243,8 @@ void SceneMgr::Render()
 			}
 			else if (pobj->GetType() == OBJECT_BULLET  )
 			{
-				m_pRenderer->DrawParticle(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 1, 1, 1 , 1, pobj->GetDir().x, pobj->GetDir().y, textureSpark1, pobj->GetParticleTime());
+				if (pobj->m_fParticleAlpha > 0)
+					m_pRenderer->DrawParticle(pobj->GetInfo().vPos.x, pobj->GetInfo().vPos.y, pobj->GetInfo().vPos.z, pobj->GetInfo().size, 1, 1, 1 , pobj->m_fParticleAlpha, pobj->GetDir().x, pobj->GetDir().y, textureSpark1, pobj->GetParticleTime() , 0);
 			}
 			else
 			{
@@ -278,7 +290,7 @@ void SceneMgr::MakeCharacter(int x, int y)
 			m_fTimeDOWN = 0.0f;
 			
 
-			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, 1, 1, 1, nullptr, texturePlayer);
+			CreateObject(x, y, 0, OBJECT_CHARACTER, TEAM_2, true, 1, 1, 1, nullptr, texturePlayer);
 		}
 		else
 		{
